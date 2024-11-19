@@ -50,7 +50,7 @@ export default function Home() {
         {/* Top Header */}
 <div className="flex justify-between items-center w-full px-8 py-4 bg-[#080F13]">
   <div className="flex-1"></div> {/* Empty div to push content to the center */}
-  <h2 className="text-2xl font-semibold text-center">Prompt {promptIndex} / 5</h2>
+  <h2 className="text-2xl font-semibold text-center font-instrumentSans">Prompt: &nbsp;{promptIndex} / 5</h2>
   <h1 className="text-4xl font-bold font-londrinaShadow flex-1 text-right">LEAP Quick-Draw</h1>
 </div>
 
@@ -64,7 +64,7 @@ export default function Home() {
 
           {/* Sidebar for Leaderboard */}
           <div className="w-1/3 text-white m-4 flex flex-col items-center justify-center p-4">
-            <h2>Wrong Guess Counter: {wrongGuessCount}</h2>
+            <h2 className="font-instrumentSans text-xl">WRONG GUESS COUNTER: {wrongGuessCount}</h2>
             <div className="w-full mt-4">
               <input
                 type="text"

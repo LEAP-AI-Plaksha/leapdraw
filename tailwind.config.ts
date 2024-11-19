@@ -13,7 +13,8 @@ export default {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        londrinaShadow: "var(--font-londrina-shadow)"
+        londrinaShadow: "var(--font-londrina-shadow)",
+        instrumentSans: "var(--font-instrument-sans)",
       }
     },
   },
