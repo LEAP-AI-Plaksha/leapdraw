@@ -1,4 +1,5 @@
 import React from "react";
+import Link from 'next/link';
 
 const Home: React.FC = () => {
   return (
@@ -11,7 +12,7 @@ const Home: React.FC = () => {
         <div className="max-w-md space-y-6">
           <div>
             <h1 className="text-5xl font-bold">Welcome to</h1>
-            <h2 className="text-4xl font-bold text-orange-500">
+            <h2 className="text-4xl font-bold text-orange-400">
               LEAP Quick-Draw
             </h2>
           </div>
@@ -21,12 +22,16 @@ const Home: React.FC = () => {
             ever since the 1500s.
           </p>
           <div className="flex gap-4">
+            <Link href="/joinroom">
             <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium">
-              JOIN ROOM
+              Join Room
             </button>
+            </Link>
+            <Link href="/waitingroom">
             <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium">
-              CREATE ROOM
+              Create Room
             </button>
+            </Link>
           </div>
           <p className="text-gray-300 text-sm">
             Wanna learn more about our model?

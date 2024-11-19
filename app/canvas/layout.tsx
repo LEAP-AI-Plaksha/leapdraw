@@ -13,11 +13,6 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const londrinaShadow = localFont({
-    src: "../fonts/LondrinaShadow-Regular.ttf",
-    variable: "--font-londrina-shadow",
-    weight: "400",
-});
 export const metadata: Metadata = {
   title: "LEAPDRAW",
   description: "Built using next.js",
