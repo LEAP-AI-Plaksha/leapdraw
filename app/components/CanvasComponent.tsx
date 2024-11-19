@@ -51,7 +51,7 @@ const Canvas: React.FC = () => {
   const CustomToolbar = () => (
     <DefaultToolbar>
       <>
-        <ToolbarItem tool="hand" />
+        {/* <ToolbarItem tool="hand" /> */}
         <ToolbarItem tool="draw" />
         <ToolbarItem tool="eraser" />
       </>

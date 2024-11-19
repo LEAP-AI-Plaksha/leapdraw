@@ -1,10 +1,13 @@
+// app/page.tsx
+import CanvasComponent from "../../components/CanvasComponent";
+
 export default function Home() {
   return (
     <div
-      className="relative min-h-screen bg-cover bg-right bg-no-repeat flex items-start justify-start"
+      className="relative h-screen bg-cover bg-right bg-no-repeat flex items-start justify-start h-full w-full"
       style={{ backgroundImage: "url('/gradbg.svg')" }}
     >
-      <div className=" relative z-5 flex flex-col items-center w-full h-full text-white mt-5 ">
+      <div className="relative z-5 flex flex-col items-center w-full h-full text-white mt-5">
         {/* Top Header */}
         <div className="flex justify-between items-center w-full px-8 py-4 bg-[#080F13]">
           <h1 className="text-2xl font-bold">LEAP Quick-Draw</h1>
@@ -12,9 +15,10 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <div className="flex w-full h-full">
-          {/* White Canvas Area */}
-          <div className="flex-1 flex justify-center items-center bg-white m-4">
+        <div className="flex w-[95%] h-full mb-5">
+          {/* p5.js Canvas Area */}
+          <div className="flex-1 m-4">
+            <CanvasComponent />
           </div>
 
           {/* Sidebar for Leaderboard */}
@@ -31,7 +35,11 @@ export default function Home() {
                       <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black font-bold">
                         {index + 1}
                       </div>
-                      <span className={`text-${index === 4 ? "gray" : "cyan"}-400`}>
+                      <span
+                        className={`text-${
+                          index === 4 ? "gray" : "cyan"
+                        }-400`}
+                      >
                         {player}
                       </span>
                     </div>
