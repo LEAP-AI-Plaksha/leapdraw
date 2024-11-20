@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Londrina_Shadow } from "next/font/google";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -13,6 +14,17 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const londrinaShadow = localFont({
+  src: "../../fonts/LondrinaShadow-Regular.ttf",
+  variable: "--font-londrina-shadow",
+  weight: "400",
+});
+
+const instrumentSans = localFont({
+  src: "../../fonts/InstrumentSans.ttf",
+  variable: "--font-instrument-sans",
+  weight: "400",
+});
 export const metadata: Metadata = {
   title: "LEAPDRAW",
   description: "Built using next.js",
@@ -26,8 +38,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable}  ${instrumentSans.variable} antialiased`}
+      > 
         {children}
       </body>
     </html>

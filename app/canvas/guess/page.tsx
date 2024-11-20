@@ -1,26 +1,44 @@
-// app/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
-import CanvasComponent from "../../components/CanvasComponent";
 
 export default function Home() {
   const [guess, setGuess] = useState(""); // State to store the guess input
   const [wrongGuessCount, setWrongGuessCount] = useState(0); // State to store wrong guesses
   const [promptIndex, setPromptIndex] = useState(1); // State to store the current prompt index
-  
-  // // Fetch prompt index from API
-  // useEffect(() => {
-  //   const fetchPromptIndex = async () => {
-  //     // Placeholder for API call
-  //     // const response = await fetch("/api/getPromptIndex"); // Replace with your actual API endpoint
-  //     // const data = await response.json();
-  //     // setPromptIndex(data.promptIndex || 1); // Set fetched prompt index, default to 1 if not available
-  //     setPromptIndex(1);
-  //   };
 
-  //   fetchPromptIndex();
-  // }, []);
+  useEffect(() => {
+    // WebSocket connection setup
+    const wsUrl = "ws://localhost:8765"; // Replace with your WebSocket URL
+    const socket = new WebSocket(wsUrl);
+
+    // When WebSocket receives a message
+    socket.onmessage = (event) => {
+      try {
+        const base64Image = event.data; // Assuming the WebSocket sends a base64 string
+        const drawingImage = document.getElementById("drawingImage");
+        if (drawingImage) {
+          // Set the received base64 image as the background
+          drawingImage.style.backgroundImage = `url(${base64Image})`;
+          drawingImage.style.backgroundSize = "contain";
+          drawingImage.style.backgroundRepeat = "no-repeat";
+          drawingImage.style.backgroundPosition = "center";
+        }
+      } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+      }
+    };
+
+    // Handle WebSocket errors
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    // Clean up WebSocket connection on unmount
+    return () => {
+      socket.close();
+    };
+  }, []); // Runs once on component mount
 
   // Function to handle guess submission
   const handleGuessSubmit = async () => {
@@ -43,28 +61,40 @@ export default function Home() {
 
   return (
     <div
-      className="relative h-screen bg-cover bg-right bg-no-repeat flex items-start justify-start h-full w-full"
+      className="relative h-screen bg-cover bg-right bg-no-repeat flex items-start justify-start w-full"
       style={{ backgroundImage: "url('/gradbg.svg')" }}
     >
-      <div className="relative z-5 flex flex-col items-center w-full h-full text-white mt-5">
+      <div className="relative z-5 flex flex-col items-center w-full h-full text-white pt-5">
         {/* Top Header */}
-<div className="flex justify-between items-center w-full px-8 py-4 bg-[#080F13]">
-  <div className="flex-1"></div> {/* Empty div to push content to the center */}
-  <h2 className="text-2xl font-semibold text-center font-instrumentSans">Prompt: &nbsp;{promptIndex} / 5</h2>
-  <h1 className="text-4xl font-bold font-londrinaShadow flex-1 text-right">LEAP Quick-Draw</h1>
-</div>
-
+        <div className="flex justify-between items-center w-full px-8 py-4 bg-[#080F13]">
+          <div className="flex-1"></div> {/* Empty div to push content to the center */}
+          <h2 className="text-2xl font-semibold text-center font-instrumentSans">
+            Prompt: &nbsp;{promptIndex} / 5
+          </h2>
+          <h1 className="text-4xl font-bold font-londrinaShadow flex-1 text-right">
+            LEAP Quick-Draw
+          </h1>
+        </div>
 
         {/* Main Content */}
         <div className="flex w-[95%] h-full mb-5">
           {/* p5.js Canvas Area */}
           <div className="flex-1 m-4">
-            <CanvasComponent />
+            {/* square div */}
+            <div
+              id="drawingImage"
+              className="w-full h-full bg-white"
+              style={{
+                border: "2px solid black",
+              }}
+            ></div>
           </div>
 
           {/* Sidebar for Leaderboard */}
           <div className="w-1/3 text-white m-4 flex flex-col items-center justify-center p-4">
-            <h2 className="font-instrumentSans text-xl">WRONG GUESS COUNTER: {wrongGuessCount}</h2>
+            <h2 className="font-instrumentSans text-xl">
+              WRONG GUESS COUNTER: {wrongGuessCount}
+            </h2>
             <div className="w-full mt-4">
               <input
                 type="text"

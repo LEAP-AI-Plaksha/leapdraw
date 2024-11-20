@@ -1,59 +1,89 @@
-// app/page.tsx
-import CanvasComponent from "../../components/CanvasComponent";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Canvas, { exportCanvasAsImage, sendImageToWebSocket } from "../../components/CanvasComponent";
 
 export default function Home() {
+  const [guess, setGuess] = useState(""); // State to store the guess input
+  const [wrongGuessCount, setWrongGuessCount] = useState(0); // State to store wrong guesses
+  const [promptIndex, setPromptIndex] = useState(1); // State to store the current prompt index
+  const [prompt, setPromot] = useState("Butterfly");
+  const [editor, setEditor] = useState<any>(null);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const wsUrl = "ws://localhost:8765"; // Replace with your WebSocket URL
+    const interval = setInterval(() => {
+      sendImageToWebSocket(editor, wsUrl).catch((err) =>
+        console.error("Error sending image to WebSocket:", err)
+      );
+    }, 500); // Send every 0.5 seconds
+
+    return () => clearInterval(interval); // Cleanup the interval on unmount
+  }, [editor]); // Runs when the editor instance changes
+
+  const handleExport = async () => {
+    if (!editor) {
+      console.error("Editor instance is not available");
+      return;
+    }
+    await exportCanvasAsImage(editor);
+  };
+
+  // Function to handle guess submission
+  const handleGuessSubmit = async () => {
+    // Make an API call (placeholder for now)
+    const isCorrect = false; // Replace with API response
+
+    if (!isCorrect) {
+      setWrongGuessCount((prevCount) => prevCount + 1); // Increment wrong guess count
+    }
+    setGuess(""); // Clear the input field
+  };
+
+  // Function to handle Enter key press
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent form submission or default behavior
+      handleGuessSubmit();
+    }
+  };
+
   return (
     <div
-      className="relative h-screen bg-cover bg-right bg-no-repeat flex items-start justify-start h-full w-full"
+      className="relative h-screen bg-cover bg-right bg-no-repeat flex items-start justify-start w-full"
       style={{ backgroundImage: "url('/gradbg.svg')" }}
     >
-      <div className="relative z-5 flex flex-col items-center w-full h-full text-white mt-5">
+      <div className="relative z-5 flex flex-col items-center w-full h-full text-white pt-5">
         {/* Top Header */}
         <div className="flex justify-between items-center w-full px-8 py-4 bg-[#080F13]">
-          <h1 className="text-2xl font-bold">LEAP Quick-Draw</h1>
-          <div className="text-lg font-bold">00:00</div>
+          <div className="flex-1"></div> {/* Empty div to push content to the center */}
+          <h2 className="text-2xl font-semibold text-center font-instrumentSans">
+            Prompt: &nbsp;{promptIndex} / 5
+          </h2>
+          <h1 className="text-4xl font-bold font-londrinaShadow flex-1 text-right">
+            LEAP Quick-Draw
+          </h1>
         </div>
 
         {/* Main Content */}
         <div className="flex w-[95%] h-full mb-5">
           {/* p5.js Canvas Area */}
           <div className="flex-1 m-4">
-            <CanvasComponent />
+            <Canvas onEditorReady={setEditor} />
           </div>
 
-          {/* Sidebar for Leaderboard */}
-          <div className="w-1/3 bg-red-700 text-white m-4 flex flex-col items-center justify-between p-4">
-            <h2 className="text-xl font-bold mb-4">Leaderboard</h2>
-            <ul className="w-full space-y-4">
-              {["Player 1", "Player 2", "Player 3", "Player 4", "AI"].map(
-                (player, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center justify-between bg-black p-2 rounded-md shadow-lg"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black font-bold">
-                        {index + 1}
-                      </div>
-                      <span
-                        className={`text-${
-                          index === 4 ? "gray" : "cyan"
-                        }-400`}
-                      >
-                        {player}
-                      </span>
-                    </div>
-                  </li>
-                )
-              )}
-            </ul>
-            <div className="w-full mt-4">
-              <input
-                type="text"
-                placeholder="Enter your Guess:"
-                className="w-full p-2 rounded-md bg-gray-800 text-white border border-gray-600"
-              />
-            </div>
+          <div className="w-1/3 text-white m-4 flex flex-col items-center justify-center p-4">
+            <h2 className="font-instrumentSans text-3xl">
+              Please draw a {prompt}
+            </h2>
+            <button
+              onClick={handleExport}
+              className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium font-instrumentSans text-xl mt-4"
+            >
+              Export Canvas
+            </button>
           </div>
         </div>
       </div>
