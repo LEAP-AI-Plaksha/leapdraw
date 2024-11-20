@@ -1,21 +1,32 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useWebSocket } from "../../../contexts/WebSocketContext2";
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const roomID = searchParams.get("roomID");
+  const promptIndex = searchParams.get("promptIndex");
   const [guess, setGuess] = useState(""); // State to store the guess input
   const [wrongGuessCount, setWrongGuessCount] = useState(0); // State to store wrong guesses
-  const [promptIndex, setPromptIndex] = useState(1); // State to store the current prompt index
+  const socket = useWebSocket() as WebSocket;
+  // const [promptIndex, setPromptIndex] = useState(1); // State to store the current prompt index
 
   useEffect(() => {
-    // WebSocket connection setup
-    const wsUrl = "ws://localhost:8765"; // Replace with your WebSocket URL
-    const socket = new WebSocket(wsUrl);
+    
 
     // When WebSocket receives a message
     socket.onmessage = (event) => {
       try {
-        const base64Image = event.data; // Assuming the WebSocket sends a base64 string
+        const responseJSON = event.data; // Assuming the WebSocket sends a base64 string
+        const base64Image = JSON.parse(responseJSON).imageData;
+        const action = JSON.parse(responseJSON).action;
+        if (action !== "imageReceive") {
+          console.error("Invalid action received:", action);
+          return;
+        }
         const drawingImage = document.getElementById("drawingImage");
         if (drawingImage) {
           // Set the received base64 image as the background
@@ -35,9 +46,7 @@ export default function Home() {
     };
 
     // Clean up WebSocket connection on unmount
-    return () => {
-      socket.close();
-    };
+    return;
   }, []); // Runs once on component mount
 
   // Function to handle guess submission

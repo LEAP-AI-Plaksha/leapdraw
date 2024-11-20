@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { WebSocketProvider } from "../../contexts/WebSocketContext2";
 // import "./globals.css";
 
 
@@ -35,11 +36,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+            <WebSocketProvider>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable} ${instrumentSans.variable} antialiased`}
       >
         {children}
       </body>
+      </WebSocketProvider>
+
     </html>
   );
 }

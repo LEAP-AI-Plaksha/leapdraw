@@ -38,9 +38,9 @@ export const exportCanvasAsImage = async (editor: any) => {
   });
 };
 
-export const sendImageToWebSocket = async (editor: any, wsUrl: string) => {
+export const sendImageToWebSocket = async (editor: any, socket: WebSocket, roomId: string) => {
   if (!editor) throw new Error("Editor instance is required");
-  if (!wsUrl) throw new Error("WebSocket URL is required");
+  if (!socket) throw new Error("WebSocket is required");
 
   try {
     const imageBase64 = await exportCanvasAsImage(editor);
@@ -49,14 +49,11 @@ export const sendImageToWebSocket = async (editor: any, wsUrl: string) => {
       return; // Exit early if no image is exported
     }
 
-    const socket = new WebSocket(wsUrl);
 
-    socket.onopen = () => {
-      console.log("WebSocket connection established.");
-      socket.send(imageBase64);
-      console.log("Image sent to WebSocket:", wsUrl);
-      socket.close();
-    };
+      // console.log("WebSocket connection established.");
+      socket.send(JSON.stringify({ imageData: imageBase64, action: "imageReceive", roomId: roomId }));
+      // console.log("Image sent to WebSocket:", wsUrl);
+  
 
     socket.onerror = (error) => {
       console.error("WebSocket error:", error);

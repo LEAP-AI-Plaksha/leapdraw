@@ -2,20 +2,24 @@
 
 import React, { useState, useEffect } from "react";
 import Canvas, { exportCanvasAsImage, sendImageToWebSocket } from "../../components/CanvasComponent";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useWebSocket } from "../../../contexts/WebSocketContext1";
 
 export default function Home() {
+  const socket = useWebSocket() as WebSocket;
+  const searchParams = useSearchParams();
+  const roomID = searchParams.get("roomID") as string;
+  const promptIndex = searchParams.get("promptIndex");
   const [guess, setGuess] = useState(""); // State to store the guess input
   const [wrongGuessCount, setWrongGuessCount] = useState(0); // State to store wrong guesses
-  const [promptIndex, setPromptIndex] = useState(1); // State to store the current prompt index
   const [prompt, setPromot] = useState("Butterfly");
   const [editor, setEditor] = useState<any>(null);
 
   useEffect(() => {
     if (!editor) return;
 
-    const wsUrl = "ws://localhost:8765"; // Replace with your WebSocket URL
     const interval = setInterval(() => {
-      sendImageToWebSocket(editor, wsUrl).catch((err) =>
+      sendImageToWebSocket(editor, socket, roomID).catch((err) =>
         console.error("Error sending image to WebSocket:", err)
       );
     }, 500); // Send every 0.5 seconds

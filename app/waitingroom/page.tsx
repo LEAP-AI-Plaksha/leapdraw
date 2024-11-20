@@ -2,9 +2,11 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useWebSocket } from "../../contexts/WebSocketContext1";
 
 const WaitingRoomPage: React.FC = () => {
   const [roomId, setRoomId] = useState<string>("");
+  const socket = useWebSocket();
   const router = useRouter();
 
   useEffect(() => {
@@ -12,43 +14,28 @@ const WaitingRoomPage: React.FC = () => {
     const generatedRoomId = Math.floor(1000 + Math.random() * 9000).toString();
     setRoomId(generatedRoomId);
 
-    // Establish WebSocket connection and send room ID
-    const socket = new WebSocket("ws://localhost:8080");
-
-    socket.onopen = () => {
-      console.log("WebSocket connection opened");
-      // Send the room creation message
+    if (socket) {
+      socket.onopen = () =>
+      {
+      
       socket.send(JSON.stringify({ action: "createRoom", roomId: generatedRoomId }));
-      console.log(JSON.stringify({ action: "createRoom", roomId: generatedRoomId }));
-    };
+        
+        }
+      
 
-    socket.onmessage = (event) => {
-      // Parse the incoming message
-      const message = JSON.parse(event.data);
+      socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
 
-      // Check if the message indicates that another player has joined
-      if (message.status === "playerJoined") {
-        console.log("Player 2 has joined the room");
-        // Redirect to the drawing canvas with roomID and prompt
-        router.push(`/canvas/draw?roomID=${generatedRoomId}&prompt=1`);
-      }
-    };
+        if (message.status === "playerJoined") {
+          console.log("Player 2 has joined the room");
+          // Redirect to the drawing canvas
+          router.push(`/canvas/draw?roomID=${generatedRoomId}&promptIndex=1`);
+        }
+      };
 
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    socket.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-
-    // Clean up WebSocket connection on component unmount
-    return () => {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.close();
-      }
-    };
-  }, [router]);
+      socket.onerror = (error) => console.error("WebSocket error:", error);
+    }
+  }, [socket, router]);
 
   return (
     <div
