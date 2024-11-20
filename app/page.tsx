@@ -5,13 +5,13 @@ const Home: React.FC = () => {
   return (
     <div
       className="relative min-h-screen bg-cover bg-no-repeat"
-      style={{ backgroundImage: "url('/homebg.svg')" }}
+      style={{ backgroundImage: "url('/finhome2.png')" }}
     >
       <div className="relative z-10 flex items-center justify-between h-screen px-10 text-white mx-20">
         {/* Left Section - Text */}
         <div className="max-w-lg space-y-6">
           <div className="">
-            <h1 className="text-3xl font-bold font-instrumentSans">Welcome to</h1>
+            <h1 className="text-xl font-bold font-instrumentSans">Welcome to</h1>
             <h2 className="text-7xl font-bold text-orange-400 font-londrinaShadow">
               LEAP Quick-Draw
             </h2>
@@ -31,19 +31,11 @@ const Home: React.FC = () => {
             </button>
             </Link>
           </div>
-          <p className="text-gray-300 text-sm text-instrumentSans">
+          {/* <p className="text-gray-300 text-sm text-instrumentSans">
             Wanna learn more about our model? Click here!
-          </p>
+          </p> */}
         </div>
 
-        {/* Right Section - Illustration */}
-        <div className="hidden lg:block">
-          <img
-            src="/frog-magnifying-glass.png"
-            alt="Illustration"
-            className="max-w-md"
-          />
-        </div>
       </div>
     </div>
   );
