@@ -15,7 +15,7 @@ export const initializeWebSocket2 = (): void => {
   }
 
   // Create a new WebSocket instance
-  socket2 = new WebSocket("ws://localhost:8080/ws2");
+  socket2 = new WebSocket("ws://localhost:8080");
 
   socket2.onopen = () => console.log("WebSocket2 connected");
   socket2.onclose = () => console.log("WebSocket2 disconnected");

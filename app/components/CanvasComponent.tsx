@@ -17,10 +17,30 @@ export const exportCanvasAsImage = async (editor: any) => {
 
   const shapeIds = editor.getCurrentPageShapeIds();
 
-  // Check if the canvas is empty
+  // If the canvas is empty, export a blank image
   if (shapeIds.size === 0) {
-    console.warn("Canvas is empty. Nothing to export.");
-    return null; // Return null to indicate no image is exported
+    console.warn("Canvas is empty. Exporting a blank image.");
+    const blankCanvas = document.createElement("canvas");
+    blankCanvas.width = 200; // Set desired width for blank image
+    blankCanvas.height = 200; // Set desired height for blank image
+    const ctx = blankCanvas.getContext("2d");
+    if (ctx) {
+      ctx.fillStyle = "#FFFFFF"; // Set background color
+      ctx.fillRect(0, 0, blankCanvas.width, blankCanvas.height);
+    }
+
+    return new Promise<string>((resolve, reject) => {
+      blankCanvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error("Failed to create blank image blob"));
+          return;
+        }
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob); // Convert blob to base64
+      }, "image/png");
+    });
   }
 
   const blob = await exportToBlob({
@@ -49,11 +69,7 @@ export const sendImageToWebSocket = async (editor: any, socket: WebSocket, roomI
       return; // Exit early if no image is exported
     }
 
-
-      // console.log("WebSocket connection established.");
-      socket.send(JSON.stringify({ imageData: imageBase64, action: "imageReceive", roomId: roomId }));
-      // console.log("Image sent to WebSocket:", wsUrl);
-  
+    socket.send(JSON.stringify({ imageData: imageBase64, action: "imageReceive", roomId: roomId }));
 
     socket.onerror = (error) => {
       console.error("WebSocket error:", error);
