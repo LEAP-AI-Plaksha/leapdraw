@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Londrina_Shadow } from "next/font/google";
 import "./globals.css";
-
 const geistSans = localFont({
   src: "../../fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -36,12 +35,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable}  ${instrumentSans.variable} antialiased`}
-      > 
-        {children}
-      </body>
-    </html>
+    // <WebSocket2Provider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable} ${instrumentSans.variable} antialiased`}
+        >
+          {children}
+        </body>
+      </html>
   );
 }

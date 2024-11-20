@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useWebSocket } from "../../../contexts/WebSocketContext2";
+import { getWebSocket2 } from "../../utils/ws2";
 
 export default function Home() {
   const router = useRouter();
@@ -11,19 +11,18 @@ export default function Home() {
   const promptIndex = searchParams.get("promptIndex");
   const [guess, setGuess] = useState(""); // State to store the guess input
   const [wrongGuessCount, setWrongGuessCount] = useState(0); // State to store wrong guesses
-  const socket = useWebSocket() as WebSocket;
+  const socket = getWebSocket2() as WebSocket;
   // const [promptIndex, setPromptIndex] = useState(1); // State to store the current prompt index
 
   useEffect(() => {
     
-
-    // When WebSocket receives a message
     socket.onmessage = (event) => {
       try {
         const responseJSON = event.data; // Assuming the WebSocket sends a base64 string
         const base64Image = JSON.parse(responseJSON).imageData;
         const action = JSON.parse(responseJSON).action;
-        if (action !== "imageReceive") {
+        console.log(action)
+        if (action !== "imageDeliver") {
           console.error("Invalid action received:", action);
           return;
         }

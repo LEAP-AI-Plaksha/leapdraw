@@ -2,26 +2,27 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useWebSocket } from "../../contexts/WebSocketContext1";
+import { initializeWebSocket1, getWebSocket1 } from "../utils/ws1";
 
 const WaitingRoomPage: React.FC = () => {
   const [roomId, setRoomId] = useState<string>("");
-  const socket = useWebSocket();
   const router = useRouter();
 
   useEffect(() => {
-    // Generate a random 4-digit room ID
+    console.log("Trying to initialize WebSocket 1");
+    initializeWebSocket1();
+    const socket = getWebSocket1();
+
     const generatedRoomId = Math.floor(1000 + Math.random() * 9000).toString();
     setRoomId(generatedRoomId);
 
     if (socket) {
-      socket.onopen = () =>
-      {
-      
-      socket.send(JSON.stringify({ action: "createRoom", roomId: generatedRoomId }));
-        
-        }
-      
+      socket.onopen = () => {
+        console.log("WebSocket connection opened");
+        console.log("Sending create room message");
+        socket.send(JSON.stringify({ action: "createRoom", roomId: generatedRoomId }));
+        console.log("Room created successfully:", generatedRoomId);
+      };
 
       socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
@@ -34,8 +35,18 @@ const WaitingRoomPage: React.FC = () => {
       };
 
       socket.onerror = (error) => console.error("WebSocket error:", error);
+
+      // Clean up event listeners on component unmount
+      return () => {
+        socket.onopen = null;
+        socket.onmessage = null;
+        socket.onerror = null;
+        socket.onclose = null;
+      };
+    } else {
+      console.error("Socket is null");
     }
-  }, [socket, router]);
+  }, [router]);
 
   return (
     <div
@@ -46,18 +57,16 @@ const WaitingRoomPage: React.FC = () => {
       <div className="absolute top-5 left-5 flex items-center space-x-2">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
-            <img
-              src="/backbutton.svg"
-              alt="Back"
-              className="w-12 h-12"
-            />
+            <img src="/backbutton.svg" alt="Back" className="w-12 h-12" />
             <span className="ml-2 text-white text-xl font-medium font-instrumentSans">leave</span>
           </div>
         </Link>
       </div>
 
       <div className="absolute top-5 right-5">
-        <h1 className="text-4xl font-bold font-londrinaShadow flex-1 text-right">LEAP Quick-Draw</h1>
+        <h1 className="text-4xl font-bold font-londrinaShadow flex-1 text-right">
+          LEAP Quick-Draw
+        </h1>
       </div>
 
       {/* Main Content */}

@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from "react";
 import Canvas, { exportCanvasAsImage, sendImageToWebSocket } from "../../components/CanvasComponent";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useWebSocket } from "../../../contexts/WebSocketContext1";
+import { getWebSocket1 } from "../../utils/ws1";
 
 export default function Home() {
-  const socket = useWebSocket() as WebSocket;
+
   const searchParams = useSearchParams();
   const roomID = searchParams.get("roomID") as string;
   const promptIndex = searchParams.get("promptIndex");
@@ -14,7 +14,8 @@ export default function Home() {
   const [wrongGuessCount, setWrongGuessCount] = useState(0); // State to store wrong guesses
   const [prompt, setPromot] = useState("Butterfly");
   const [editor, setEditor] = useState<any>(null);
-
+  const socket = getWebSocket1() as WebSocket;
+  console.log(socket)
   useEffect(() => {
     if (!editor) return;
 
