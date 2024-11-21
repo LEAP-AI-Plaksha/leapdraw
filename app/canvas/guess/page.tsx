@@ -34,7 +34,7 @@ export default function GuessPage() {
           // Move to the next level
           socket.send(JSON.stringify({ action: "nextLevel", roomId: roomID }));
         } else if (action === "startLevel") {
-          const newPromptIndex = responseJSON.level;
+          const newPromptIndex = responseJSON.level + 1; // Adjusted here
           // Clear the image and reset guess input
           setImageData(null);
           setGuess("");
@@ -45,6 +45,12 @@ export default function GuessPage() {
           alert(`Game Over! Winner: ${winner}\nAI Score: ${aiScore}\nHuman Score: ${humanScore}`);
           // Redirect to waiting room or home page
           router.push("/waitingroom");
+        } else if (action === "guessFeedback") {
+          const { correct } = responseJSON;
+          if (!correct) {
+            // Increment wrong guess count
+            setWrongGuessCount((prevCount) => prevCount + 1);
+          }
         }
       } catch (error) {
         console.error("Error processing WebSocket message:", error);
@@ -82,7 +88,7 @@ export default function GuessPage() {
     );
 
     setGuess(""); // Clear the input field
-    setWrongGuessCount((prevCount) => prevCount + 1); // Increment wrong guess count
+    // Removed incrementing wrongGuessCount here
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

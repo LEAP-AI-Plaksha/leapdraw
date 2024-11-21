@@ -45,8 +45,9 @@ export default function DrawPage() {
         // Request to move to the next level
         socket.send(JSON.stringify({ action: "nextLevel", roomId: roomID }));
       } else if (message.action === "startLevel") {
+        const newPromptIndex = message.level + 1; // Adjusted here
         // Reload the page with the next promptIndex
-        router.push(`/canvas/draw?roomID=${roomID}&promptIndex=${message.level}`);
+        router.push(`/canvas/draw?roomID=${roomID}&promptIndex=${newPromptIndex}`);
       } else if (message.action === "gameOver") {
         const { winner, aiScore, humanScore } = message;
         alert(`Game Over! Winner: ${winner}\nAI Score: ${aiScore}\nHuman Score: ${humanScore}`);
