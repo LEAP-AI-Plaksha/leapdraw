@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Canvas, { sendImageToWebSocket } from "../../components/CanvasComponent";
+import Canvas, { sendImageToWebSocket, clearCanvas } from "../../components/CanvasComponent";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getWebSocket1 } from "../../utils/ws1";
 
@@ -23,35 +23,30 @@ export default function DrawPage() {
 
     const keepAliveInterval = setInterval(() => {
       if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ action: "ping" })); // Send a ping to keep the connection alive
+        socket.send(JSON.stringify({ action: "ping" }));
       }
-    }, 15000); // Ping every 15 seconds
+    }, 15000);
 
-    // Request the current prompt from the server
     socket.send(JSON.stringify({ action: "getPrompt", roomId: roomID }));
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-
+      console.log(message)
       if (message.action === "prompt") {
         setPrompt(message.prompt);
       } else if (message.action === "aiGuess") {
         const { category, confidence } = message;
-        console.log(`AI Guess: ${category} (Confidence: ${confidence})`);
         setAiGuess(`${category} (${(confidence * 100).toFixed(2)}%)`);
       } else if (message.action === "levelComplete") {
-        const { winner, aiScore, humanScore } = message;
-        alert(`Level Complete! Winner: ${winner}`);
-        // Request to move to the next level
+        console.log("got levelComplete")
         socket.send(JSON.stringify({ action: "nextLevel", roomId: roomID }));
       } else if (message.action === "startLevel") {
-        const newPromptIndex = message.level + 1; // Adjusted here
-        // Reload the page with the next promptIndex
-        router.push(`/canvas/draw?roomID=${roomID}&promptIndex=${newPromptIndex}`);
+        // clearCanvas(editor);
+        console.log("startlevel called");
+        router.push(`/canvas/draw?roomID=${roomID}&promptIndex=${message.level}`);
       } else if (message.action === "gameOver") {
         const { winner, aiScore, humanScore } = message;
         alert(`Game Over! Winner: ${winner}\nAI Score: ${aiScore}\nHuman Score: ${humanScore}`);
-        // Redirect to waiting room or home page
         router.push("/waitingroom");
       }
     };
@@ -65,7 +60,7 @@ export default function DrawPage() {
     };
 
     return () => {
-      clearInterval(keepAliveInterval); // Clear the keep-alive interval
+      clearInterval(keepAliveInterval);
       socket.onmessage = null;
       socket.onerror = null;
       socket.onclose = null;
@@ -79,20 +74,21 @@ export default function DrawPage() {
       sendImageToWebSocket(editor, socket, roomID).catch((err) =>
         console.error("Error sending image to WebSocket:", err)
       );
-    }, 2000); // Send every 2 seconds
+    }, 2000);
 
-    return () => clearInterval(interval); // Cleanup the interval on unmount
+    return () => clearInterval(interval);
   }, [editor, socket, roomID]);
+useEffect(() => {
+  console.log('requesting prompt');
+  console.log(roomID);
+  socket.send(JSON.stringify({ action: "getPrompt", roomId: roomID }))
+}, [promptIndex]);
 
   return (
-    <div
-      className="relative h-screen bg-cover bg-right bg-no-repeat flex items-start justify-start w-full"
-      style={{ backgroundImage: "url('/gradbg.svg')" }}
-    >
+    <div className="relative h-screen bg-cover bg-right bg-no-repeat flex items-start justify-start w-full" style={{ backgroundImage: "url('/gradbg.svg')" }}>
       <div className="relative z-5 flex flex-col items-center w-full h-full text-white pt-5">
-        {/* Top Header */}
         <div className="flex justify-between items-center w-full px-8 py-4 bg-[#080F13]">
-          <div className="flex-1"></div> {/* Empty div to push content to the center */}
+          <div className="flex-1"></div>
           <h2 className="text-2xl font-semibold text-center font-instrumentSans">
             Prompt: &nbsp;{promptIndex} / 3
           </h2>
@@ -101,9 +97,7 @@ export default function DrawPage() {
           </h1>
         </div>
 
-        {/* Main Content */}
         <div className="flex w-[95%] h-full mb-5">
-          {/* p5.js Canvas Area */}
           <div className="flex-1 m-4">
             <Canvas onEditorReady={setEditor} />
           </div>

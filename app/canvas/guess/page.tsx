@@ -29,17 +29,19 @@ export default function GuessPage() {
           const base64Image = responseJSON.imageData;
           setImageData(base64Image);
         } else if (action === "levelComplete") {
+          {/* pause the websocket */}
+          
           const { winner, aiScore, humanScore } = responseJSON;
-          alert(`Level Complete! Winner: ${winner}`);
+          // alert(`Level Complete! Winner: ${winner}`);
           // Move to the next level
-          socket.send(JSON.stringify({ action: "nextLevel", roomId: roomID }));
+          // socket.send(JSON.stringify({ action: "nextLevel", roomId: roomID }));
         } else if (action === "startLevel") {
-          const newPromptIndex = responseJSON.level + 1; // Adjusted here
           // Clear the image and reset guess input
+          console.log("startlevel called");
           setImageData(null);
           setGuess("");
           // Navigate to the next level
-          router.push(`/canvas/guess?roomID=${roomID}&promptIndex=${newPromptIndex}`);
+          router.push(`/canvas/guess?roomID=${roomID}&promptIndex=${responseJSON.level}`);
         } else if (action === "gameOver") {
           const { winner, aiScore, humanScore } = responseJSON;
           alert(`Game Over! Winner: ${winner}\nAI Score: ${aiScore}\nHuman Score: ${humanScore}`);
@@ -86,6 +88,7 @@ export default function GuessPage() {
         guess: guess.trim(),
       })
     );
+    console.log("somethign went?");
 
     setGuess(""); // Clear the input field
     // Removed incrementing wrongGuessCount here
@@ -132,9 +135,9 @@ export default function GuessPage() {
 
           {/* Sidebar for Guessing */}
           <div className="w-1/3 text-white m-4 flex flex-col items-center justify-center p-4">
-            <h2 className="font-instrumentSans text-xl">
+            {/* <h2 className="font-instrumentSans text-xl">
               WRONG GUESS COUNTER: {wrongGuessCount}
-            </h2>
+            </h2> */}
             <div className="w-full mt-4">
               <input
                 type="text"

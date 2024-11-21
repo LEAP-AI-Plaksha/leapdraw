@@ -9,7 +9,7 @@ const JoinRoomPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
   const [socket, setSocket] = useState<WebSocket | null>(null);
-
+  var savedRoomId;
   useEffect(() => {
     initializeWebSocket2();
     const ws = getWebSocket2();
@@ -27,7 +27,8 @@ const JoinRoomPage: React.FC = () => {
         if (response.status === "success") {
           console.log("Room joined successfully:", response);
           // Redirect to the guessing canvas
-          router.push(`/canvas/guess?roomID=${roomId}&promptIndex=1`);
+          // print()
+          router.push(`/canvas/guess?roomID=${response.roomId}&promptIndex=1`);
         } else if (response.status === "error") {
           setErrorMessage(response.message || "Failed to join room.");
           console.error("Failed to join room:", response.message);
@@ -61,7 +62,7 @@ const JoinRoomPage: React.FC = () => {
       setErrorMessage("WebSocket connection not available. Please try again.");
       return;
     }
-
+    savedRoomId = roomId;
     const sendJoinRequest = () => {
       socket.send(JSON.stringify({ action: "joinRoom", roomId }));
     };
@@ -114,6 +115,7 @@ const JoinRoomPage: React.FC = () => {
             className="text-center w-64 h-12 bg-white text-black font-bold font-instrumentSans"
             onChange={(e) => {
               setRoomId(e.target.value);
+              console.log(roomId)
               setErrorMessage(null); // Clear error message on input change
             }}
           />

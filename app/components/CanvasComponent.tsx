@@ -57,6 +57,19 @@ export const exportCanvasAsImage = async (editor: any) => {
     reader.readAsDataURL(blob); // Converts the blob to a base64 data URL
   });
 };
+export const clearCanvas = (editor: any) => {
+  if (!editor) throw new Error("Editor instance is required");
+
+  const shapeIds = editor.getCurrentPageShapeIds();
+
+  if (shapeIds.size === 0) {
+    console.warn("Canvas is already empty.");
+    return;
+  }
+
+  editor.deleteShapes([...shapeIds]); // Deletes all shapes in the current page
+  console.log("Canvas cleared successfully.");
+};
 
 export const sendImageToWebSocket = async (editor: any, socket: WebSocket, roomId: string) => {
   if (!editor) throw new Error("Editor instance is required");
