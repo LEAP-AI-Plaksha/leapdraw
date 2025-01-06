@@ -9,8 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/font": "^14.2.15",
-    "canvas": "^2.11.2",
+    "canvas": "^3.0.1",
     "konva": "^9.3.16",
     "next": "15.0.3",
     "p5": "^1.11.1",
