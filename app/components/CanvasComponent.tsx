@@ -14,7 +14,7 @@ import {
 } from "tldraw";
 import "tldraw/tldraw.css";
 
-export const exportCanvasAsImage = async (editor: any) => {
+export const exportCanvasAsImage = async (editor: Editor) => {
   if (!editor) throw new Error("Editor instance is required");
 
   const shapeIds = editor.getCurrentPageShapeIds();
@@ -73,7 +73,7 @@ export const clearCanvas = (editor: Editor) => {
   console.log("Canvas cleared successfully.");
 };
 
-export const sendImageToWebSocket = async (editor: any, socket: WebSocket, roomId: string) => {
+export const sendImageToWebSocket = async (editor: Editor, socket: WebSocket, roomId: string) => {
   if (!editor) throw new Error("Editor instance is required");
   if (!socket) throw new Error("WebSocket is required");
 
