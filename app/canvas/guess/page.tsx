@@ -51,7 +51,7 @@ export default function GuessPage() {
             `Game Over! Winner: ${winner}\nAI Score: ${aiScore}\nHuman Score: ${humanScore}`
           );
           // Redirect to waiting room or home page
-          router.push("/waitingroom");
+          router.push("/joinroom");
         } else if (action === "guessFeedback") {
           const { correct } = responseJSON;
           if (!correct) {
