@@ -9,10 +9,12 @@ import {
   useIsToolSelected,
   TldrawUiMenuToolItem,
   exportToBlob,
+  TLOnMountHandler,
+  Editor,
 } from "tldraw";
 import "tldraw/tldraw.css";
 
-export const exportCanvasAsImage = async (editor: any) => {
+export const exportCanvasAsImage = async (editor: Editor) => {
   if (!editor) throw new Error("Editor instance is required");
 
   const shapeIds = editor.getCurrentPageShapeIds();
@@ -57,9 +59,9 @@ export const exportCanvasAsImage = async (editor: any) => {
     reader.readAsDataURL(blob); // Converts the blob to a base64 data URL
   });
 };
-export const clearCanvas = (editor: any) => {
+export const clearCanvas = (editor: Editor) => {
   if (!editor) throw new Error("Editor instance is required");
-
+  console.log(editor)
   const shapeIds = editor.getCurrentPageShapeIds();
 
   if (shapeIds.size === 0) {
@@ -71,7 +73,7 @@ export const clearCanvas = (editor: any) => {
   console.log("Canvas cleared successfully.");
 };
 
-export const sendImageToWebSocket = async (editor: any, socket: WebSocket, roomId: string) => {
+export const sendImageToWebSocket = async (editor: Editor, socket: WebSocket, roomId: string) => {
   if (!editor) throw new Error("Editor instance is required");
   if (!socket) throw new Error("WebSocket is required");
 
@@ -96,8 +98,8 @@ export const sendImageToWebSocket = async (editor: any, socket: WebSocket, roomI
   }
 };
 
-const Canvas: React.FC<{ onEditorReady?: (editor: any) => void }> = ({
-  onEditorReady,
+const Canvas: React.FC<{ onMount: TLOnMountHandler }> = ({
+  onMount
 }) => {
   function ToolbarItem({ tool }: ToolbarItemProps) {
     const tools = useTools();
@@ -127,11 +129,7 @@ const Canvas: React.FC<{ onEditorReady?: (editor: any) => void }> = ({
     <Tldraw
       components={components}
       cameraOptions={{ isLocked: true }}
-      onMount={(editor) => {
-        if (onEditorReady) {
-          onEditorReady(editor);
-        }
-      }}
+      onMount={onMount}
     />
   );
 };

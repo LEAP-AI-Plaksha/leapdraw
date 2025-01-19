@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getWebSocket2 } from "../../utils/ws2";
-
+import Image from "next/image";
 export default function GuessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,9 +29,10 @@ export default function GuessPage() {
           const base64Image = responseJSON.imageData;
           setImageData(base64Image);
         } else if (action === "levelComplete") {
-          {/* pause the websocket */}
-          
-          const { winner, aiScore, humanScore } = responseJSON;
+          {
+            /* pause the websocket */
+          }
+
           // alert(`Level Complete! Winner: ${winner}`);
           // Move to the next level
           // socket.send(JSON.stringify({ action: "nextLevel", roomId: roomID }));
@@ -41,12 +42,16 @@ export default function GuessPage() {
           setImageData(null);
           setGuess("");
           // Navigate to the next level
-          router.push(`/canvas/guess?roomID=${roomID}&promptIndex=${responseJSON.level}`);
+          router.push(
+            `/canvas/guess?roomID=${roomID}&promptIndex=${responseJSON.level}`
+          );
         } else if (action === "gameOver") {
           const { winner, aiScore, humanScore } = responseJSON;
-          alert(`Game Over! Winner: ${winner}\nAI Score: ${aiScore}\nHuman Score: ${humanScore}`);
+          alert(
+            `Game Over! Winner: ${winner}\nAI Score: ${aiScore}\nHuman Score: ${humanScore}`
+          );
           // Redirect to waiting room or home page
-          router.push("/waitingroom");
+          router.push("/joinroom");
         } else if (action === "guessFeedback") {
           const { correct } = responseJSON;
           if (!correct) {
@@ -109,7 +114,8 @@ export default function GuessPage() {
       <div className="relative z-5 flex flex-col items-center w-full h-full text-white pt-5">
         {/* Top Header */}
         <div className="flex justify-between items-center w-full px-8 py-4 bg-[#080F13]">
-          <div className="flex-1"></div> {/* Empty div to push content to the center */}
+          <div className="flex-1"></div>{" "}
+          {/* Empty div to push content to the center */}
           <h2 className="text-2xl font-semibold text-center font-instrumentSans">
             Prompt: &nbsp;{promptIndex} / 3
           </h2>
@@ -123,9 +129,12 @@ export default function GuessPage() {
           {/* Image Display Area */}
           <div className="flex-1 m-4 flex items-center justify-center">
             {imageData ? (
-              <img
+              <Image
                 src={imageData}
                 alt="Drawing"
+                layout="intrinsic"
+                width={500}
+                height={500}
                 className="max-w-full max-h-full border-2 border-black"
               />
             ) : (
