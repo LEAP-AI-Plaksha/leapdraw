@@ -1,41 +1,70 @@
 import React from "react";
-import Link from 'next/link';
+import Link from "next/link";
+import {
+  Londrina_Shadow,
+  Instrument_Sans,
+  Shadows_Into_Light,
+} from "next/font/google";
+
+const londrinaShadow = Londrina_Shadow({ subsets: ["latin"], weight: "400" });
+const instrumentSans = Instrument_Sans({ subsets: ["latin"], weight: "400" });
+const shadowsIntoLightTwo = Shadows_Into_Light({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 const Home: React.FC = () => {
   return (
-    <div
-      className="relative min-h-screen bg-cover bg-no-repeat"
-      style={{ backgroundImage: "url('/finhome2.png')" }}
-    >
-      <div className="relative z-10 flex items-center justify-between h-screen px-10 text-white mx-20">
-        {/* Left Section - Text */}
-        <div className="max-w-lg space-y-6">
-          <div className="">
-            <h1 className="text-xl font-bold font-instrumentSans">Welcome to</h1>
-            <h2 className="text-7xl font-bold text-orange-400 font-londrinaShadow">
+    <div className=" w-full min-h-screen from-[#0E1B22] via-[#0F1C23] to-[#AB572B] bg-gradient-to-br px-4 lg:px-12">
+      <div className="flex flex-col lg:flex-row items-center max-lg:gap-8">
+        {/* Left Content */}
+        <div className="flex lg:min-w-[60%] items-center justify-center px-4 lg:px-10">
+          <main className="flex flex-col h-full text-center lg:text-left space-y-4 lg:space-y-6">
+            <span className="text-[40px] lg:text-[63px] font-bold font-instrumentSans text-white mt-[80px] lg:mt-[160px]">
+              Welcome to
+            </span>
+            <span
+              className={`text-[56px] lg:text-[108px] font-normal text-white ${londrinaShadow.className}`}
+            >
               LEAP Quick-Draw
-            </h2>
-          </div>
-          <p className="text-xl font-instrumentSans">
-            This is a game that makes you race against AI in guessing drawings. Think you are better?
-          </p>
-          <div className="flex gap-4">
-            <Link href="/joinroom">
-            <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium font-instrumentSans text-xl">
-              Join Room
-            </button>
-            </Link>
-            <Link href="/waitingroom">
-            <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium font-instrumentSans text-xl">
-              Create Room
-            </button>
-            </Link>
-          </div>
-          {/* <p className="text-gray-300 text-sm text-instrumentSans">
-            Wanna learn more about our model? Click here!
-          </p> */}
+            </span>
+            <p
+              className={`text-[18px] lg:text-[24px] text-white ${instrumentSans.className}`}
+            >
+              This is a game that makes you race against AI in guessing
+              drawings. Think you are better?
+            </p>
+
+            {/* Buttons */}
+            <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-8 mt-6">
+              <Link href="/joinroom">
+                <button className="bg-red-500 hover:bg-red-600 text-white text-[18px] h-[50px] lg:h-[57px] w-full lg:w-[320px] rounded-[90px] font-bold font-instrumentSans px-4">
+                  SINGLE-PLAYER
+                </button>
+              </Link>
+              <Link href="/joinroom">
+                <button className="bg-red-500 hover:bg-red-600 text-white text-[18px] h-[50px] lg:h-[57px] w-full lg:w-[320px] rounded-[90px] font-bold font-instrumentSans px-4">
+                  MULTI-PLAYER
+                </button>
+              </Link>
+            </div>
+
+            <p
+              className={`text-gray-300 text-[24px] lg:text-[32px] mt-4 ${shadowsIntoLightTwo.className}`}
+            >
+              Wanna learn more about our model?
+            </p>
+          </main>
         </div>
 
+        {/* Right Image Section */}
+        <div className="w-full lg:min-w-[40%] h-[250px] lg:h-screen relative px-4 lg:px-10">
+          <img
+            src="/doodle.png"
+            alt="Game Preview"
+            className="absolute bottom-[1px] left-4 right-4 lg:left-10 lg:right-10 w-auto max-w-full h-auto max-h-full object-contain"
+          />
+        </div>
       </div>
     </div>
   );
