@@ -3,6 +3,14 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { initializeWebSocket2, getWebSocket2 } from "../utils/ws2";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Header from "../components/Header";
 
 const JoinRoomPage: React.FC = () => {
   const [roomId, setRoomId] = useState<string>("");
@@ -78,71 +86,33 @@ const JoinRoomPage: React.FC = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col relative"
-      style={{ backgroundColor: "#EA4A2E" }}
-    >
-      {/* Header */}
-      <div className="absolute top-5 left-5 flex items-center space-x-2">
-        <Link href="/">
-          <div className="flex items-center cursor-pointer">
-            <img
-              src="/backbutton.svg"
-              alt="Back"
-              className="w-12 h-12"
-            />
-            <span className="ml-2 text-white text-xl font-medium font-instrumentSans">
-              leave
-            </span>
-          </div>
-        </Link>
+    <div className="w-full min-h-screen bg-black h-screen">
+      {/*Layer 1*/}
+     <Header/>
+
+      {/*Avatar*/}
+      <div className="flex justify-center items-center h-[60%]">
+        <Carousel className="w-full max-w-xs">
+          <CarouselContent>
+            {Array.from({ length: 15 }).map((_, index) => (
+              <CarouselItem key={index}>
+                <div className="p-1">
+                  <img
+                    src="/avatar.svg"
+                    alt={`Avatar ${index + 2}`}
+                    className="border"
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="bg-[#EA4A2E] h-16 w-16 just" />
+          <CarouselNext className="bg-[#EA4A2E]" />
+        </Carousel>
       </div>
-
-      <div className="absolute top-5 right-5">
-        <h1 className="text-4xl font-bold font-londrinaShadow flex-1 text-right">
-          LEAP Quick-Draw
-        </h1>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center text-white">
-        {/* Input for room ID to join */}
-        <div className="flex flex-col items-center space-y-4">
-          <h2 className="text-2xl font-bold font-instrumentSans">Room ID:</h2>
-          <input
-            type="text"
-            value={roomId}
-            className="text-center w-64 h-12 bg-white text-black font-bold font-instrumentSans"
-            onChange={(e) => {
-              setRoomId(e.target.value);
-              console.log(roomId)
-              setErrorMessage(null); // Clear error message on input change
-            }}
-          />
-        </div>
-
-        {/* Error Message */}
-        {errorMessage && (
-          <div className="mt-4 text-red-500 font-medium">{errorMessage}</div>
-        )}
-
-        {/* Button to join room */}
-        <button
-          onClick={handleJoinRoom}
-          className="bg-white hover:bg-gray-200 text-black px-6 py-3 rounded-lg font-medium font-instrumentSans text-xl mt-5"
-        >
-          Join Room
-        </button>
-      </div>
-
-      {/* Image */}
-      <div className="absolute bottom-0 right-0">
-        <img
-          src="/waitingroomimage.svg"
-          alt="Waiting Room Illustration"
-          className="w-64 h-64"
-        />
-      </div>
+      {/*Name*/}
+      <div></div>
+      {/*Buttons */}
     </div>
   );
 };
