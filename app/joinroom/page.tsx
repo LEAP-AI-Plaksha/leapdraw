@@ -11,6 +11,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Header from "../components/Header";
+import { Button } from "@/components/ui/button";
 
 const JoinRoomPage: React.FC = () => {
   const [roomId, setRoomId] = useState<string>("");
@@ -88,7 +89,7 @@ const JoinRoomPage: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-black h-screen">
       {/*Layer 1*/}
-     <Header/>
+      <Header />
 
       {/*Avatar*/}
       <div className="flex justify-center items-center h-[60%]">
@@ -106,13 +107,33 @@ const JoinRoomPage: React.FC = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="bg-[#EA4A2E] h-16 w-16 just" />
-          <CarouselNext className="bg-[#EA4A2E]" />
+
+          <CarouselPrevious className="bg-[#EA4A2E] h-16 w-16 justify-center" />
+          <CarouselNext className="bg-[#EA4A2E] h-16 w-16 justify-center" />
         </Carousel>
       </div>
-      {/*Name*/}
-      <div></div>
-      {/*Buttons */}
+      <div className="flex justify-center">
+        <input
+          type="text"
+          placeholder="Enter your name..."
+          className="w-[30%] text-xl bg-black text-gray-400 border-b-4  border-[#EA4A2E] outline-none focus:border-[#EA4A2E] placeholder-gray-500"
+        />
+      </div>
+      <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-6 mt-10 justify-center">
+        <Link href="/joinroom">
+          <button className="bg-red-500 hover:bg-red-600 text-white text-[28px] h-[40px] lg:h-[45px] w-full lg:w-[220px] rounded-[30px] font-bold font-instrumentSans px-3">
+            New Room
+          </button>
+        </Link>
+        <Link href="/joinroom">
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white text-[28px] h-[40px] lg:h-[45px] w-[40px] lg:w-[220px] rounded-[30px] font-bold font-instrumentSans px-3"
+            onClick={handleJoinRoom}
+          >
+            Join Room
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };

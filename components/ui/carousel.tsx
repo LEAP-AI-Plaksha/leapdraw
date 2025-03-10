@@ -214,7 +214,7 @@ const CarouselPrevious = React.forwardRef<
       className={cn(
         "absolute  h-8 w-8 rounded-full",
         orientation === "horizontal"
-          ? "-left-12 top-1/2 -translate-y-1/2"
+          ? "-left-20 top-1/2 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
@@ -222,7 +222,7 @@ const CarouselPrevious = React.forwardRef<
       onClick={scrollPrev}
       {...props}
     >
-       <span className={`${kenia.className} text-[80px]  text-white font-extrabold justify-center items-center`}>&lt;</span>
+       <span className={`${kenia.className} text-[76px] text-white font-extrabold justify-center items-center`}>&lt;</span>
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -241,9 +241,9 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full ",
+        "absolute h-8 w-8 rounded-full ml-10 ",
         orientation === "horizontal"
-          ? "-right-12 top-1/2 -translate-y-1/2"
+          ? "-right-20 top-1/2 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
@@ -251,7 +251,7 @@ const CarouselNext = React.forwardRef<
       onClick={scrollNext}
       {...props}
     >
-      <span className={`${kenia.className} text-[20px] text-white font-extrabold justify-center items-center`}>&gt;</span>
+      <span className={`${kenia.className} text-[76px] text-white font-extrabold justify-center items-center`}>&gt;</span>
       <span className="sr-only">Next slide</span>
     </Button>
   )
