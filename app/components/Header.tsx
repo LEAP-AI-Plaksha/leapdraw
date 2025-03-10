@@ -14,7 +14,7 @@ const Header = () => {
           </div>
         </Link>
         <span className="text-4xl text-white font-bold font-londrinaShadow flex-1 text-right">
-          LEAP Quick-Draw
+          LEAP QUICK-Draw
         </span>
       </div>
     </div>
