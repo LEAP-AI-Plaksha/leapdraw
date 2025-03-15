@@ -225,8 +225,12 @@ const DisplayPage: React.FC = () => {
       ref={displayRef}
     >
       <Header />
-      <div className="absolute top-0 left-0 w-full h-full">
-        <div className="text-lg font-semibold p-4">Room: 2987767</div>
+      <div className="absolute top-0 left-0 w-full h-full  flex items-center justify-center">
+        <div className="flex justify-center items-center w-full absolute top-9">
+          <h1 className="text-4xl text-white font-bold font-instrumentSans text-center">
+            Room: 2987767
+          </h1>
+        </div>
         {/* Render bubbles dynamically */}
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
@@ -243,7 +247,7 @@ const DisplayPage: React.FC = () => {
               }}
             >
               <div
-                className="rounded-full w-40 h-40 flex items-center justify-center border-8 border-white"
+                className="rounded-full w-40 h-30 flex items-center justify-center border-8 border-white"
                 style={{
                   backgroundColor: bubble.color,
                 }}
@@ -251,8 +255,8 @@ const DisplayPage: React.FC = () => {
                 <Image
                   src={`/froggy/froggy${index + 1}.svg`}
                   alt={`Froggy ${index + 1}`}
-                  width={224}
-                  height={224}
+                  width={320}
+                  height={320}
                   className="object-cover rounded-full"
                 />
               </div>
@@ -266,6 +270,15 @@ const DisplayPage: React.FC = () => {
             </div>
           ))
         )}
+        <div className="absolute bottom-8 w-full flex justify-center items-center">
+          <p className="text-3xl text-white font-bold font-instrumentSans text-center ">
+            Press{" "}
+            <span className="bg-[#EA4A2E] text-white px-8 py-1 rounded-full">
+              Enter
+            </span>{" "}
+            to start the game!
+          </p>
+        </div>
       </div>
     </div>
   );
