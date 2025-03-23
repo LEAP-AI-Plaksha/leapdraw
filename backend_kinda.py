@@ -3,24 +3,30 @@ from supabase import create_client
 import os
 import random
 import asyncio
-import base64
-from PIL import Image
-from io import BytesIO
-from inference import predict_from_image, pad_image_to_square
+from inference.predict import predict_from_image, pad_image_to_square
+from dotenv import load_dotenv  # Correctly positioned
+from pydantic import BaseModel
 
-# Environment variables for Supabase
+# # Load environment variables from .env file
+load_dotenv()
+
+# # Environment variables for Supabase
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Load all possible prompts from a file
+
+# # Load all possible prompts from a file
 with open('categories.txt', 'r') as f:
     ALL_PROMPTS = [line.strip() for line in f.readlines()]
+# ALL_PROMPTS = ["test prompt"]  # Temporary placeholder to bypass the missing file error
 
 app = FastAPI()
 active_connections = {}
 game_rooms = {}
 ROUND_DURATION = 30  # 30 seconds per round
+ 
 
 # Message handler map
 message_handlers = {}
@@ -32,9 +38,18 @@ def message_handler(message_type):
     return decorator
 
 async def broadcast_message(room_id, message):
-    connections = game_rooms[room_id]['clients']
-    for connection in connections:
-        await connection.send_json(message)
+    if room_id in game_rooms:
+        connections = game_rooms[room_id].get('clients', [])
+        print(f"📢 Broadcasting to {len(connections)} clients in Room {room_id}")  # Debug Log
+
+        for connection in connections.copy():
+            try:
+                await connection.send_json(message)
+                print(f"✅ Sent message to client: {message}")
+            except Exception as e:
+                print(f"❗ Failed to send message to client. Removing client: {e}")
+                if room_id in game_rooms and connection in game_rooms[room_id]['clients']:
+                    game_rooms[room_id]['clients'].remove(connection)
 
 async def update_leaderboard(room_id):
     try:
@@ -58,8 +73,24 @@ async def next_round(room_id):
     await asyncio.sleep(ROUND_DURATION)
     await next_round(room_id)
 
+
+# @app.post("/create_room/")
+# async def create_room(room_id: str):
+#     game_rooms[room_id] = {
+#         'clients': [],
+#         'scores': {},
+#         'round': 0,
+#         'drawer': None,
+#         'prompts': [],
+#     }
+#     return {"status": "room created", "room_id": room_id}
+
+class RoomCreateRequest(BaseModel):
+    room_id: str
+
 @app.post("/create_room/")
-async def create_room(room_id: str):
+async def create_room(request: RoomCreateRequest):
+    room_id = request.room_id  # Extract room_id from JSON
     game_rooms[room_id] = {
         'clients': [],
         'scores': {},
@@ -67,7 +98,9 @@ async def create_room(room_id: str):
         'drawer': None,
         'prompts': [],
     }
+    print("🚀 Room Created:", game_rooms)  # Debug print statement
     return {"status": "room created", "room_id": room_id}
+
 
 @message_handler("guess_send")
 async def handle_guess(room_id, username, data):
@@ -81,31 +114,61 @@ async def handle_guess(room_id, username, data):
 
 @message_handler("chat_send")
 async def handle_chat(room_id, username, data):
-    await broadcast_message(room_id, {"type": "chat_receive", "username": username, "message": data.get("message")})
+    await broadcast_message(room_id, {
+        "type": "chat_receive", 
+        "username": username, 
+        "message": data.get("message")
+    }) 
+ 
 
 @app.websocket("/ws/{room_id}/{username}")
 async def websocket_endpoint(websocket: WebSocket, room_id: str, username: str):
     await websocket.accept()
+    await asyncio.sleep(0.5)  # Stabilize connection before processing # FIXED
+
     if room_id not in game_rooms:
         await websocket.send_json({"type": "error", "message": "Room does not exist."})
         await websocket.close()
         return
-    game_rooms[room_id]['clients'].append(websocket)
-    game_rooms[room_id]['scores'][username] = 0
-    if not game_rooms[room_id]['drawer']:
-        game_rooms[room_id]['drawer'] = username
-        await broadcast_message(room_id, {"type": "drawer_assigned", "drawer": username})
+
+    # Add clients safely
+    game_rooms[room_id].setdefault('clients', [])  # FIXED
+    game_rooms[room_id].setdefault('clients', []).append(websocket)
+
+    game_rooms[room_id].setdefault('scores', {})  # FIXED
+    game_rooms[room_id]['scores'][username] = 0  # FIXED
+
+    print(f"✅ WebSocket Connected: {username} in Room {room_id}")  # FIXED
     await broadcast_message(room_id, {"type": "user_joined", "username": username})
+    print(f"📡 Clients in Room {room_id}: {len(game_rooms[room_id]['clients'])}")  # FIXED
 
     try:
         while True:
             data = await websocket.receive_json()
+            print(f"📩 Received from {username}: {data}")  # FIXED
             message_type = data.get("type")
             handler = message_handlers.get(message_type)
             if handler:
                 await handler(room_id, username, data)
     except WebSocketDisconnect:
+        print(f"❌ {username} Disconnected.")  # FIXED
+        if websocket in game_rooms[room_id]['clients']:
+            game_rooms[room_id]['clients'].remove(websocket)  # FIXED
+
+    if room_id in game_rooms and websocket in game_rooms[room_id]['clients']:
         game_rooms[room_id]['clients'].remove(websocket)
+
+    # Only delete the room if no clients remain
         if not game_rooms[room_id]['clients']:
-            del game_rooms[room_id]  # Clean up empty room
+            del game_rooms[room_id]  
+        
         await broadcast_message(room_id, {"type": "user_left", "username": username})
+
+
+@app.get("/debug/game_rooms")
+async def debug_game_rooms():
+    return {"game_rooms": game_rooms}
+ 
+
+if __name__ == "__main__":
+    pass
