@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -22,6 +23,9 @@ const instrumentSans = localFont({
   variable: "--font-instrument-sans",
   weight: "400",
 });
+const inter = Inter({
+  subsets: ["latin"],
+});
 export const metadata: Metadata = {
   title: "LEAPDRAW",
   description: "Built using next.js",
@@ -35,11 +39,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable} ${instrumentSans.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable} ${instrumentSans.variable} $(inter.className} antialiased`}
       >
-      
-            {children}
-          
+        {children}
       </body>
     </html>
   );
