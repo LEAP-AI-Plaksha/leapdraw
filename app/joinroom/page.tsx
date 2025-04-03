@@ -1,8 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { initializeWebSocket2, getWebSocket2 } from "../utils/ws2";
 import {
   Carousel,
   CarouselContent,
@@ -18,50 +15,62 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useWebSocket } from "../contexts/webSocketContext";
+import { useRouter } from "next/navigation";
 
 const JoinRoomPage: React.FC = () => {
+  const { socket, sendMessage, latestMessage } = useWebSocket();
   const [roomId, setRoomId] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [isHost, setIsHost] = useState<boolean>(false);
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [round, setRound] = useState<number>(0);
+  const [players, setPlayers] = useState<string[]>([]);
   const router = useRouter();
-  const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    initializeWebSocket2();
-    const ws = getWebSocket2();
-    setSocket(ws);
+    if (latestMessage) {
+      console.log("Message received:", latestMessage);
 
-    if (ws) {
-      ws.onopen = () => console.log("WebSocket2 connection opened");
-      ws.onmessage = (event) => {
-        const response = JSON.parse(event.data);
-        if (response.status === "success") {
-          router.push(`/canvas/guess?roomID=${response.roomId}&promptIndex=1`);
-        } else {
-          setErrorMessage(response.message || "Failed to join room.");
-        }
-      };
-      ws.onerror = () => setErrorMessage("WebSocket error. Please try again.");
-      return () => {
-        ws.onopen = null;
-        ws.onmessage = null;
-        ws.onerror = null;
-        ws.onclose = null;
-      };
-    } else {
-      setErrorMessage("Failed to initialize WebSocket. Please try again.");
-    }
-  }, [router]);
+      if (latestMessage.type === "room_created") {
+        const roomId = latestMessage.room_id;
+        console.log(`Room created with ID: ${roomId}`);
 
-  const handleJoinRoom = () => {
-    if (!roomId) {
-      setErrorMessage("Please enter a valid Room ID.");
-      return;
+        sendMessage({
+          type: "join_room",
+          room_id: roomId,
+          username: username || "TestUser1",
+        });
+
+        console.log(`Joining room: ${roomId} as ${username || "TestUser1"}`);
+
+        // ✅ Navigate to waiting area
+        router.push(`/waitingarea/${roomId}`);
+      } else if (latestMessage.type === "room_joined") {
+        const roomId = latestMessage.room_id;
+        router.push(`/waitingarea/${roomId}`);
+      }
     }
-    if (!socket || socket.readyState !== WebSocket.OPEN) {
-      setErrorMessage("WebSocket is not ready. Please try again.");
-      return;
+  }, [latestMessage, sendMessage, username, router, roomId]);
+
+  const handleCreateRoom = () => {
+    sendMessage({
+      type: "create_room",
+    });
+  };
+
+  const handleJoinRoom = (roomId: number, username: string) => {
+    sendMessage({
+      type: "join_room",
+      room_id: roomId,
+      username: username,
+    });
+  };
+
+  const handleSubmitName = () => {
+    if (username.trim() !== "") {
+      console.log(`Name submitted: ${username}`);
     }
-    socket.send(JSON.stringify({ action: "joinRoom", roomId }));
   };
 
   return (
@@ -91,13 +100,23 @@ const JoinRoomPage: React.FC = () => {
         </Carousel>
       </div>
 
-      {/* Input Field */}
+      {/* Input Field with Submit Button */}
       <div className="w-full flex justify-center mt-16">
-        <input
-          type="text"
-          placeholder="Enter your name..."
-          className="w-full max-w-xs text-lg bg-black text-gray-400 border-b-4 border-[#EA4A2E] outline-none focus:border-[#EA4A2E] placeholder-gray-500 text-center"
-        />
+        <div className="flex w-full max-w-xs">
+          <input
+            type="text"
+            placeholder="Enter your name..."
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full text-lg bg-black text-gray-400 border-b-4 border-[#EA4A2E] outline-none focus:border-[#EA4A2E] placeholder-gray-500 text-center"
+          />
+          <button
+            onClick={handleSubmitName}
+            className="ml-2 bg-[#EA4A2E] text-white px-4 rounded-md hover:bg-red-600 text-sm font-bold"
+          >
+            Submit
+          </button>
+        </div>
       </div>
 
       {/* Buttons */}
@@ -115,23 +134,26 @@ const JoinRoomPage: React.FC = () => {
             <input
               type="text"
               placeholder="Enter Room ID..."
-              value={roomId}
+              value={roomId ?? ""}
               onChange={(e) => setRoomId(e.target.value)}
               className="w-full text-lg bg-black text-gray-400 border-b-4 border-[#EA4A2E] outline-none focus:border-[#EA4A2E] placeholder-gray-500 text-center"
             />
             <button
               className="mt-4 bg-red-500 hover:bg-red-600 text-white text-lg h-12 w-full rounded-full font-bold"
-              onClick={handleJoinRoom}
+              onClick={() =>
+                roomId && handleJoinRoom(parseInt(roomId), username)
+              }
             >
               Confirm & Join
-            </button>
+            </button>{" "}
           </DialogContent>
         </Dialog>
-        <Link href="/assignment">
-          <button className="bg-red-500 hover:bg-red-600 text-white text-[24px] h-12 w-48 rounded-[15px] font-bold">
-            New Room
-          </button>
-        </Link>
+        <button
+          className="bg-red-500 hover:bg-red-600 text-white text-[24px] h-12 w-48 rounded-[15px] font-bold"
+          onClick={handleCreateRoom}
+        >
+          New Room
+        </button>
       </div>
     </div>
   );

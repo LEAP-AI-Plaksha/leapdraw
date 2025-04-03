@@ -15,7 +15,7 @@ const shadowsIntoLightTwo = Shadows_Into_Light({
 
 const Home: React.FC = () => {
   return (
-    <div className=" w-full min-h-screen from-[#0E1B22] via-[#0F1C23] to-[#AB572B] bg-gradient-to-br px-4 lg:px-12">
+    <div className=" w-full min-h-screen overflow-hidden from-[#0E1B22] via-[#0F1C23] to-[#AB572B] bg-gradient-to-br px-4 lg:px-12">
       <div className="flex flex-col lg:flex-row items-center max-lg:gap-8 justify-center">
         {/* Left Content */}
         <div className="flex lg:min-w-[60%] items-center justify-center px-4 lg:px-10">
@@ -29,7 +29,7 @@ const Home: React.FC = () => {
               LEAP Quick-Draw
             </span>
             <p
-              className={`text-[18px] lg:text-[24px] text-white ${instrumentSans.className}`}
+              className={`text-lg lg:text-2xl text-white ${instrumentSans.className}`}
             >
               This is a game that makes you race against AI in guessing
               drawings. Think you are better?
