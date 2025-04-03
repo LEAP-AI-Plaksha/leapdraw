@@ -3,14 +3,14 @@ import React from "react";
 const ErrorPage: React.FC = () => {
   return (
     <div className="w-full h-screen bg-[#EA4A2E] flex items-center justify-center">
-      <div className="flex flex-col md:flex-row items-center w-full h-full bg-[#EA4A2E] md:px-16 space-y-6 md:space-y-0 md:space-x-12 ">
+      <div className="flex flex-col md:flex-row items-center w-full h-full bg-[#EA4A2E] md:px-16 space-y-16 md:space-y-0 md:space-x-12 ">
         {/* Text Section */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-1/2">
           <div>
             <h1 className="text-[64px] font-semibold text-white font-inter">
               404 Error
             </h1>
-            <p className="text-[24px] font-medium text-white mb-2 font-inter">
+            <p className="text-[24px] font-medium text-white mb-16 font-inter">
               (not really)
             </p>
           </div>
