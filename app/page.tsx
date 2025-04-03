@@ -15,8 +15,8 @@ const shadowsIntoLightTwo = Shadows_Into_Light({
 
 const Home: React.FC = () => {
   return (
-    <div className=" w-full min-h-screen from-[#0E1B22] via-[#0F1C23] to-[#AB572B] bg-gradient-to-br px-4 lg:px-12">
-      <div className="flex flex-col lg:flex-row items-center max-lg:gap-8">
+    <div className=" w-full min-h-screen overflow-hidden from-[#0E1B22] via-[#0F1C23] to-[#AB572B] bg-gradient-to-br px-4 lg:px-12">
+      <div className="flex flex-col lg:flex-row items-center max-lg:gap-8 justify-center">
         {/* Left Content */}
         <div className="flex lg:min-w-[60%] items-center justify-center px-4 lg:px-10">
           <main className="flex flex-col h-full text-center lg:text-left space-y-4 lg:space-y-6">
@@ -29,14 +29,14 @@ const Home: React.FC = () => {
               LEAP Quick-Draw
             </span>
             <p
-              className={`text-[18px] lg:text-[24px] text-white ${instrumentSans.className}`}
+              className={`text-lg lg:text-2xl text-white ${instrumentSans.className}`}
             >
               This is a game that makes you race against AI in guessing
               drawings. Think you are better?
             </p>
 
             {/* Buttons */}
-            <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-8 mt-6">
+            <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-8 mt-20">
               <Link href="/joinroom">
                 <button className="bg-red-500 hover:bg-red-600 text-white text-[18px] h-[50px] lg:h-[57px] w-full lg:w-[320px] rounded-[90px] font-bold font-instrumentSans px-4">
                   SINGLE-PLAYER

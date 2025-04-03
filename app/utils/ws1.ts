@@ -18,6 +18,7 @@ export const initializeWebSocket1 = (): void => {
   socket1 = new WebSocket("ws://localhost:8080");
 
   socket1.onopen = () => console.log("WebSocket1 connected");
+
   socket1.onclose = () => console.log("WebSocket1 disconnected");
 };
 

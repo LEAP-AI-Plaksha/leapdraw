@@ -47,7 +47,7 @@ const WaitingRoomPage: React.FC = () => {
       console.error("Socket is null");
     }
   }, [router]);
-
+  
   return (
     <div
       className="min-h-screen flex flex-col relative"

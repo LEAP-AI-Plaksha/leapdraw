@@ -1,8 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { initializeWebSocket2, getWebSocket2 } from "../utils/ws2";
 import {
   Carousel,
   CarouselContent,
@@ -11,90 +8,82 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Header from "../components/Header";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useWebSocket } from "../contexts/webSocketContext";
+import { useRouter } from "next/navigation";
 
 const JoinRoomPage: React.FC = () => {
+  const { socket, sendMessage, latestMessage } = useWebSocket();
   const [roomId, setRoomId] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [isHost, setIsHost] = useState<boolean>(false);
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [round, setRound] = useState<number>(0);
+  const [players, setPlayers] = useState<string[]>([]);
   const router = useRouter();
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  var savedRoomId;
+
   useEffect(() => {
-    initializeWebSocket2();
-    const ws = getWebSocket2();
-    setSocket(ws);
+    if (latestMessage) {
+      console.log("Message received:", latestMessage);
 
-    if (ws) {
-      ws.onopen = () => {
-        console.log("WebSocket2 connection opened");
-      };
+      if (latestMessage.type === "room_created") {
+        const roomId = latestMessage.room_id;
+        console.log(`Room created with ID: ${roomId}`);
 
-      ws.onmessage = (event) => {
-        const response = JSON.parse(event.data);
+        sendMessage({
+          type: "join_room",
+          room_id: roomId,
+          username: username || "TestUser1",
+        });
 
-        // Check the response from the WebSocket
-        if (response.status === "success") {
-          console.log("Room joined successfully:", response);
-          // Redirect to the guessing canvas
-          // print()
-          router.push(`/canvas/guess?roomID=${response.roomId}&promptIndex=1`);
-        } else if (response.status === "error") {
-          setErrorMessage(response.message || "Failed to join room.");
-          console.error("Failed to join room:", response.message);
-        }
-      };
+        console.log(`Joining room: ${roomId} as ${username || "TestUser1"}`);
 
-      ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        setErrorMessage("WebSocket error. Please try again.");
-      };
-
-      // Clean up event listeners on component unmount
-      return () => {
-        ws.onopen = null;
-        ws.onmessage = null;
-        ws.onerror = null;
-        ws.onclose = null;
-      };
-    } else {
-      setErrorMessage("Failed to initialize WebSocket. Please try again.");
+        // ✅ Navigate to waiting area
+        router.push(`/waitingarea/${roomId}`);
+      } else if (latestMessage.type === "room_joined") {
+        const roomId = latestMessage.room_id;
+        router.push(`/waitingarea/${roomId}`);
+      }
     }
-  }, [router]);
+  }, [latestMessage, sendMessage, username, router, roomId]);
 
-  const handleJoinRoom = () => {
-    if (!roomId) {
-      setErrorMessage("Please enter a valid Room ID.");
-      return;
-    }
+  const handleCreateRoom = () => {
+    sendMessage({
+      type: "create_room",
+    });
+  };
 
-    if (!socket) {
-      setErrorMessage("WebSocket connection not available. Please try again.");
-      return;
-    }
-    savedRoomId = roomId;
-    const sendJoinRequest = () => {
-      socket.send(JSON.stringify({ action: "joinRoom", roomId }));
-    };
+  const handleJoinRoom = (roomId: number, username: string) => {
+    sendMessage({
+      type: "join_room",
+      room_id: roomId,
+      username: username,
+    });
+  };
 
-    if (socket.readyState === WebSocket.OPEN) {
-      sendJoinRequest();
-    } else if (socket.readyState === WebSocket.CONNECTING) {
-      // Wait for the socket to open before sending the message
-      socket.addEventListener("open", sendJoinRequest, { once: true });
-    } else {
-      setErrorMessage("WebSocket is not in a ready state. Please try again.");
+  const handleSubmitName = () => {
+    if (username.trim() !== "") {
+      console.log(`Name submitted: ${username}`);
     }
   };
 
   return (
-    <div className="w-full min-h-screen bg-black h-screen">
-      {/*Layer 1*/}
-     <Header/>
+    <div className="w-screen min-h-screen flex-1 bg-black flex  flex-col p-4 ">
+      <div className="">
+        <Header centerElement={null} />
+      </div>
 
-      {/*Avatar*/}
-      <div className="flex justify-center items-center h-[60%]">
-        <Carousel className="w-full max-w-xs">
+      {/* Avatar Carousel */}
+      <div className="flex justify-center items-center mt-16">
+        <Carousel className="w-52 h-40 md:w-72 md:h-72 lg:w-100 lg:h-80">
           <CarouselContent>
-            {Array.from({ length: 15 }).map((_, index) => (
+            {Array.from({ length: 10 }).map((_, index) => (
               <CarouselItem key={index}>
                 <div className="p-1">
                   <img
@@ -106,13 +95,66 @@ const JoinRoomPage: React.FC = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="bg-[#EA4A2E] h-16 w-16 just" />
-          <CarouselNext className="bg-[#EA4A2E]" />
+          <CarouselPrevious className="bg-[#EA4A2E] h-10 w-10 sm:h-12 sm:w-6 lg:h-14 lg:w-14 " />
+          <CarouselNext className="bg-[#EA4A2E] h-10 w-10 sm:h-12 sm:w-6 lg:h-14 lg:w-14" />
         </Carousel>
       </div>
-      {/*Name*/}
-      <div></div>
-      {/*Buttons */}
+
+      {/* Input Field with Submit Button */}
+      <div className="w-full flex justify-center mt-16">
+        <div className="flex w-full max-w-xs">
+          <input
+            type="text"
+            placeholder="Enter your name..."
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full text-lg bg-black text-gray-400 border-b-4 border-[#EA4A2E] outline-none focus:border-[#EA4A2E] placeholder-gray-500 text-center"
+          />
+          <button
+            onClick={handleSubmitName}
+            className="ml-2 bg-[#EA4A2E] text-white px-4 rounded-md hover:bg-red-600 text-sm font-bold"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+
+      {/* Buttons */}
+      <div className="w-full flex flex-col sm:flex-row gap-4 mt-12 justify-center items-center">
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="bg-red-500 hover:bg-red-600 text-white text-[24px] h-12 w-48 rounded-[15px] font-bold">
+              Join Room
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Enter Room ID</DialogTitle>
+            </DialogHeader>
+            <input
+              type="text"
+              placeholder="Enter Room ID..."
+              value={roomId ?? ""}
+              onChange={(e) => setRoomId(e.target.value)}
+              className="w-full text-lg bg-black text-gray-400 border-b-4 border-[#EA4A2E] outline-none focus:border-[#EA4A2E] placeholder-gray-500 text-center"
+            />
+            <button
+              className="mt-4 bg-red-500 hover:bg-red-600 text-white text-lg h-12 w-full rounded-full font-bold"
+              onClick={() =>
+                roomId && handleJoinRoom(parseInt(roomId), username)
+              }
+            >
+              Confirm & Join
+            </button>{" "}
+          </DialogContent>
+        </Dialog>
+        <button
+          className="bg-red-500 hover:bg-red-600 text-white text-[24px] h-12 w-48 rounded-[15px] font-bold"
+          onClick={handleCreateRoom}
+        >
+          New Room
+        </button>
+      </div>
     </div>
   );
 };

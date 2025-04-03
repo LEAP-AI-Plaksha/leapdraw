@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { WebSocketProvider } from "./contexts/webSocketContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,12 +35,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable} ${instrumentSans.variable} antialiased`}
-      >
-      
-            {children}
-          
+      <body className="antialiased">
+        <WebSocketProvider>{children}</WebSocketProvider>
       </body>
     </html>
   );
