@@ -11,6 +11,7 @@ import {
   exportToBlob,
   TLOnMountHandler,
   Editor,
+  getSnapshot,
 } from "tldraw";
 import "tldraw/tldraw.css";
 
@@ -59,9 +60,16 @@ export const exportCanvasAsImage = async (editor: Editor) => {
     reader.readAsDataURL(blob); // Converts the blob to a base64 data URL
   });
 };
+
+export const exportCanvasAsStrokes = async (editor: Editor) => {
+  if (!editor) throw new Error("Editor instance is required");
+  const snapshot = getSnapshot(editor.store);
+  console.log(snapshot);
+};
+
 export const clearCanvas = (editor: Editor) => {
   if (!editor) throw new Error("Editor instance is required");
-  console.log(editor)
+  console.log(editor);
   const shapeIds = editor.getCurrentPageShapeIds();
 
   if (shapeIds.size === 0) {
@@ -73,18 +81,51 @@ export const clearCanvas = (editor: Editor) => {
   console.log("Canvas cleared successfully.");
 };
 
-export const sendImageToWebSocket = async (editor: Editor, socket: WebSocket, roomId: string) => {
+export const downloadBase64Image = (base64Data: string, filename = 'canvas-image.png') => {
+  // Create a link element
+  const downloadLink = document.createElement('a');
+  
+  // Set link attributes
+  downloadLink.href = base64Data;
+  downloadLink.download = filename;
+  
+  // Append to the body
+  document.body.appendChild(downloadLink);
+  
+  // Trigger download
+  downloadLink.click();
+  
+  // Clean up
+  document.body.removeChild(downloadLink);
+};
+
+export const sendImageToWebSocket = async (
+  editor: Editor,
+  socket: WebSocket,
+  roomId: string
+) => {
   if (!editor) throw new Error("Editor instance is required");
+
+  const imageBase64 = await exportCanvasAsImage(editor);
+  downloadBase64Image(imageBase64);
   if (!socket) throw new Error("WebSocket is required");
 
   try {
-    const imageBase64 = await exportCanvasAsImage(editor);
+    // To download the image:
+    // downloadBase64Image(imageBase64);
+    
     if (!imageBase64) {
       console.warn("No image to send. Canvas might be empty.");
       return; // Exit early if no image is exported
     }
 
-    socket.send(JSON.stringify({ imageData: imageBase64, action: "imageReceive", roomId: roomId }));
+    socket.send(
+      JSON.stringify({
+        imageData: imageBase64,
+        action: "imageReceive",
+        roomId: roomId,
+      })
+    );
 
     socket.onerror = (error) => {
       console.error("WebSocket error:", error);
@@ -98,9 +139,7 @@ export const sendImageToWebSocket = async (editor: Editor, socket: WebSocket, ro
   }
 };
 
-const Canvas: React.FC<{ onMount: TLOnMountHandler }> = ({
-  onMount
-}) => {
+const Canvas: React.FC<{ onMount: TLOnMountHandler }> = ({ onMount }) => {
   function ToolbarItem({ tool }: ToolbarItemProps) {
     const tools = useTools();
     const isSelected = useIsToolSelected(tools[tool]);

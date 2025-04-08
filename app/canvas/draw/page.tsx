@@ -21,6 +21,8 @@ export default function DrawPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Comment out WebSocket-related code
+    /*
     if (!socket) {
       console.error("WebSocket is not available");
       return;
@@ -74,6 +76,7 @@ export default function DrawPage() {
       socket.onerror = null;
       socket.onclose = null;
     };
+    */
   }, [socket, roomID, router, editor]);
 
   useEffect(() => {
@@ -83,14 +86,18 @@ export default function DrawPage() {
       sendImageToWebSocket(editor, socket, roomID).catch((err) =>
         console.error("Error sending image to WebSocket:", err)
       );
-    }, 2000);
+    }, 20000);
 
     return () => clearInterval(interval);
   }, [editor, socket, roomID]);
+  
   useEffect(() => {
+    // Comment out WebSocket-related code
+    /*
     console.log("requesting prompt");
     console.log(roomID);
     socket.send(JSON.stringify({ action: "getPrompt", roomId: roomID }));
+    */
   }, [promptIndex, roomID, socket]);
 
   return (
