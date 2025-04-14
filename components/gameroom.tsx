@@ -257,7 +257,9 @@ export default function GameRoom({
               <p className="text-black underline">Game Ended</p>
             ) : (
               <div>
-                <p className="text-black underline">Round {roundSet}</p>
+                <p className="text-black underline">
+                  Round {roundSet} (Max: {maxRounds})
+                </p>
                 <p className="text-lg">Drawer: {drawer}</p>
                 {drawerPrompt && (
                   <p className="text-lg">Prompt: {drawerPrompt}</p>

@@ -123,7 +123,7 @@ export default function GamePage() {
         setTimeRemaining(msg.remaining);
       } else if (type === "game_started") {
         setIsStarted(true);
-        setMaxRounds(msg.max_rounds);
+        setMaxRounds(msg.max_rounds - 1);
         toast.success("Game started!");
       } else if (type === "new_round") {
         setCanvasImageData("");
@@ -157,9 +157,7 @@ export default function GamePage() {
         }));
       } else if (type === "round_ended") {
         setTimeRemaining(0);
-        toast.success(
-          `Round ended! Correct answer was: ${msg.correct_answer}.`
-        );
+        toast.success(`Round ended! Correct answer was: ${msg.correct_answer}`);
       } else if (type === "draw_update") {
         setCanvasImageData(msg.image);
       } else if (type === "clear_canvas") {
