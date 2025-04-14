@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Londrina_Shadow, Instrument_Sans } from "next/font/google";
+import Image from "next/image";
 
 const londrinaShadow = Londrina_Shadow({ subsets: ["latin"], weight: "400" });
 const instrumentSans = Instrument_Sans({ subsets: ["latin"], weight: "400" });
@@ -46,9 +47,10 @@ export default function Home() {
 
         {/* Right Image Section */}
         <div className="w-full lg:min-w-[40%] h-[250px] lg:h-screen relative px-4 lg:px-10">
-          <img
+          <Image
             src="/doodle.png"
             alt="Game Preview"
+            fill
             className="absolute bottom-[1px] left-4 right-4 lg:left-10 lg:right-10 w-auto max-w-full h-auto max-h-full object-contain"
           />
         </div>

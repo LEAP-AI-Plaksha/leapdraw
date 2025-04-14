@@ -69,9 +69,9 @@ export default function GamePage() {
       const type = msg.type;
 
       if (type === "player_list_update") {
-        setPlayers(msg.players);
+        setPlayers(msg.players!);
       } else if (type === "room_created") {
-        setRoomId(parseInt(msg.room_id));
+        setRoomId(msg.room_id!);
 
         if (!sentJoinRoomOnNewRoomRef.current) {
           sentJoinRoomOnNewRoomRef.current = true;
@@ -84,20 +84,20 @@ export default function GamePage() {
         setIsHost(true);
         toast.success("Room created successfully!");
       } else if (type === "room_joined") {
-        setIsHost(msg.is_host);
-        setMaxRounds(msg.max_rounds - 1);
-        setRound(msg.round - 1);
-        setPlayers(msg.players);
-        setIsStarted(msg.game_started);
-        setRoomId(parseInt(msg.room_id));
+        setIsHost(msg.is_host!);
+        setMaxRounds(msg.max_rounds! - 1);
+        setRound(msg.round! - 1);
+        setPlayers(msg.players!);
+        setIsStarted(msg.game_started!);
+        setRoomId(msg.room_id!);
       } else if (type === "player_joined") {
-        if (!players.includes(msg.username)) {
-          setPlayers((prevPlayers) => [...prevPlayers, msg.username]);
+        if (!players.includes(msg.username!)) {
+          setPlayers((prevPlayers) => [...prevPlayers, msg.username!]);
           if (msg.username !== username) {
             toast.success(
               `${
-                msg.username.length > 10
-                  ? `${msg.username.slice(0, 7)}...`
+                msg.username!.length > 10
+                  ? `${msg.username!.slice(0, 7)}...`
                   : msg.username
               } joined the room!`
             );
@@ -109,8 +109,8 @@ export default function GamePage() {
         );
         toast.error(
           `${
-            msg.username.length > 10
-              ? `${msg.username.slice(0, 7)}...`
+            msg.username!.length > 10
+              ? `${msg.username!.slice(0, 7)}...`
               : msg.username
           } left the room!`
         );
@@ -120,25 +120,25 @@ export default function GamePage() {
           toast.success("You are now the host!");
         }
       } else if (type === "timer_update") {
-        setTimeRemaining(msg.remaining);
+        setTimeRemaining(msg.remaining!);
       } else if (type === "game_started") {
         setIsStarted(true);
-        setMaxRounds(msg.max_rounds - 1);
+        setMaxRounds(msg.max_rounds! - 1);
         toast.success("Game started!");
       } else if (type === "new_round") {
         setCanvasImageData("");
         setIsStarted(true);
-        setRound(msg.round - 1);
-        setRoundSet(msg.round_set - 1);
-        setDrawer(msg.drawer);
-        if (msg.drawer === username) setDrawerPrompt(msg.prompt);
+        setRound(msg.round! - 1);
+        setRoundSet(msg.round_set! - 1);
+        setDrawer(msg.drawer!);
+        if (msg.drawer === username) setDrawerPrompt(msg.prompt!);
         else setDrawerPrompt("");
-        setTimeRemaining(msg.time);
+        setTimeRemaining(msg.time!);
       } else if (type === "chat_message") {
         const newMessage = {
-          username: msg.username,
+          username: msg.username!,
           time: new Date(),
-          message: msg.message,
+          message: msg.message!,
         };
         setChatMessages((prevMessages) => {
           return [...prevMessages, newMessage].slice(-20);
@@ -146,20 +146,20 @@ export default function GamePage() {
       } else if (type === "game_ended") {
         setCanvasImageData("");
         setIsGameOver(true);
-        setLeaderboard(msg.final_scores);
+        setLeaderboard(msg.final_scores!);
         setDrawer("");
         setDrawerPrompt("");
         setTimeRemaining(0);
       } else if (type === "correct_guess" || type === "drawer_points") {
         setLeaderboard((prevLeaderboard) => ({
           ...prevLeaderboard,
-          [msg.username]: (prevLeaderboard[msg.username] || 0) + msg.points,
+          [msg.username!]: (prevLeaderboard[msg.username!] || 0) + msg.points!,
         }));
       } else if (type === "round_ended") {
         setTimeRemaining(0);
         toast.success(`Round ended! Correct answer was: ${msg.correct_answer}`);
       } else if (type === "draw_update") {
-        setCanvasImageData(msg.image);
+        setCanvasImageData(msg.image!);
       } else if (type === "clear_canvas") {
       } else if (type === "game_restarted") {
       } else if (type === "room_left") {
@@ -365,7 +365,6 @@ export default function GamePage() {
     <GameRoom
       roomId={roomId}
       username={username}
-      isHost={isHost}
       drawer={drawer}
       isDrawer={isDrawer}
       drawerPrompt={drawerPrompt}
@@ -381,7 +380,6 @@ export default function GamePage() {
       handleNewChatMessage={handleNewChatMessage}
       sendMessage={sendMessage}
       canvasImageData={canvasImageData}
-      setCanvasImageData={setCanvasImageData}
       isGameOver={isGameOver}
     />
   ) : (

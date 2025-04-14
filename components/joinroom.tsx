@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 import Header from "./header";
 
 export default function JoinRoom({
@@ -51,20 +52,25 @@ export default function JoinRoom({
       {/* Avatar Carousel */}
       <div className="flex justify-center items-center mt-16">
         <Carousel className="w-52 h-40 md:w-72 md:h-72 lg:w-100 lg:h-80">
+          <p className="text-white text-center text-3xl pb-4 font-semibold">
+            Possible Avatars:
+          </p>
           <CarouselContent>
             {Array.from({ length: 10 }).map((_, index) => (
               <CarouselItem key={index}>
                 <div className="p-1">
-                  <img
-                    src="/avatar.svg"
-                    alt={`Avatar ${index + 2}`}
-                    className="border"
+                  <Image
+                    src={`/froggy/froggy${index + 1}.png`}
+                    alt={`Avatar ${index + 1}`}
+                    width={500}
+                    height={500}
+                    className="rounded-full border-4 border-[#EA4A2E]"
                   />
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="bg-[#EA4A2E] h-10 w-10 sm:h-12 sm:w-6 lg:h-14 lg:w-14 " />
+          <CarouselPrevious className="bg-[#EA4A2E] h-10 w-10 sm:h-12 sm:w-6 lg:h-14 lg:w-14" />
           <CarouselNext className="bg-[#EA4A2E] h-10 w-10 sm:h-12 sm:w-6 lg:h-14 lg:w-14" />
         </Carousel>
       </div>
@@ -86,7 +92,7 @@ export default function JoinRoom({
       <div className="w-full flex flex-col sm:flex-row gap-4 mt-12 justify-center items-center">
         <Dialog>
           <DialogTrigger asChild>
-            <button className="bg-red-500 hover:bg-red-600 text-white text-[24px] h-12 w-48 rounded-[15px] font-bold">
+            <button className="bg-[#EA4A2E] hover:bg-red-600 text-white text-[24px] h-12 w-48 rounded-[15px] font-bold">
               Join Room
             </button>
           </DialogTrigger>
@@ -102,7 +108,7 @@ export default function JoinRoom({
               className="w-full text-lg bg-black text-gray-400 border-b-4 border-[#EA4A2E] outline-none focus:border-[#EA4A2E] placeholder-gray-500 text-center p-2"
             />
             <button
-              className="mt-4 bg-red-500 hover:bg-red-600 text-white text-lg h-12 w-full rounded-full font-bold"
+              className="mt-4 bg-[#EA4A2E] hover:bg-red-600 text-white text-lg h-12 w-full rounded-full font-bold"
               onClick={() => joinRoomId && handleJoinRoom(joinRoomId)}
             >
               Join
@@ -110,7 +116,7 @@ export default function JoinRoom({
           </DialogContent>
         </Dialog>
         <button
-          className="bg-red-500 hover:bg-red-600 text-white text-[24px] h-12 w-48 rounded-[15px] font-bold"
+          className="bg-[#EA4A2E] hover:bg-red-600 text-white text-[24px] h-12 w-48 rounded-[15px] font-bold"
           onClick={handleCreateRoom}
         >
           New Room

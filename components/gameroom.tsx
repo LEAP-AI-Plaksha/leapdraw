@@ -20,7 +20,6 @@ import "tldraw/tldraw.css";
 interface GameRoomProps {
   roomId: number;
   username: string;
-  isHost: boolean;
   drawer: string;
   isDrawer: boolean;
   drawerPrompt: string;
@@ -37,13 +36,11 @@ interface GameRoomProps {
   handleLeaveRoom: () => void;
   sendMessage: (message: object) => void;
   canvasImageData: string;
-  setCanvasImageData: (data: string) => void;
 }
 
 export default function GameRoom({
   roomId,
   username,
-  isHost,
   drawer,
   isDrawer,
   drawerPrompt,
@@ -59,7 +56,6 @@ export default function GameRoom({
   handleLeaveRoom,
   sendMessage,
   canvasImageData,
-  setCanvasImageData,
 }: GameRoomProps) {
   const [bubbleColors] = useState(() => [
     "border-[#11AC7B]",

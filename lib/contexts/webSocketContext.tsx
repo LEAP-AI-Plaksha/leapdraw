@@ -2,9 +2,30 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+interface latestMessageType {
+  type: string;
+  players?: string[];
+  room_id?: number;
+  is_host?: boolean;
+  max_rounds?: number;
+  round?: number;
+  username?: string;
+  remaining?: number;
+  round_set?: number;
+  time?: number;
+  prompt?: string;
+  drawer?: string;
+  final_scores?: { [key: string]: number };
+  points?: number;
+  correct_answer?: string;
+  image?: string;
+  message?: string;
+  game_started?: boolean;
+}
+
 interface WebSocketContextType {
   socket: WebSocket | null;
-  latestMessage: any; // Store the latest received message
+  latestMessage: latestMessageType | null;
   sendMessage: (message: object) => void;
   isSocketReady: () => boolean;
   ackedLatestMessage: () => void;
@@ -18,7 +39,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [latestMessage, setLatestMessage] = useState<any>(null);
+  const [latestMessage, setLatestMessage] = useState<latestMessageType | null>(
+    null
+  );
 
   useEffect(() => {
     const ws = new WebSocket("ws://10.1.17.150:8000/ws");
