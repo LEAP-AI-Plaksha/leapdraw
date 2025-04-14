@@ -1,25 +1,17 @@
 import React from "react";
 import Link from "next/link";
-import {
-  Londrina_Shadow,
-  Instrument_Sans,
-  Shadows_Into_Light,
-} from "next/font/google";
+import { Londrina_Shadow, Instrument_Sans } from "next/font/google";
 
 const londrinaShadow = Londrina_Shadow({ subsets: ["latin"], weight: "400" });
 const instrumentSans = Instrument_Sans({ subsets: ["latin"], weight: "400" });
-const shadowsIntoLightTwo = Shadows_Into_Light({
-  subsets: ["latin"],
-  weight: "400",
-});
 
-const Home: React.FC = () => {
+export default function Home() {
   return (
-    <div className=" w-full min-h-screen overflow-hidden from-[#0E1B22] via-[#0F1C23] to-[#AB572B] bg-gradient-to-br px-4 lg:px-12">
+    <div className="w-full min-h-screen overflow-hidden from-black via-[#0F1C23] to-[#AB572B] bg-gradient-to-br px-4 lg:px-12">
       <div className="flex flex-col lg:flex-row items-center max-lg:gap-8 justify-center">
         {/* Left Content */}
         <div className="flex lg:min-w-[60%] items-center justify-center px-4 lg:px-10">
-          <main className="flex flex-col h-full text-center lg:text-left space-y-4 lg:space-y-6">
+          <main className="flex flex-col h-full text-center lg:text-left space-y-4 lg:space-y-6 pb-4">
             <span className="text-[40px] lg:text-[63px] font-bold font-instrumentSans text-white mt-[80px] lg:mt-[160px]">
               Welcome to
             </span>
@@ -37,23 +29,18 @@ const Home: React.FC = () => {
 
             {/* Buttons */}
             <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-8 mt-20">
-              <Link href="/joinroom">
-                <button className="bg-red-500 hover:bg-red-600 text-white text-[18px] h-[50px] lg:h-[57px] w-full lg:w-[320px] rounded-[90px] font-bold font-instrumentSans px-4">
-                  SINGLE-PLAYER
-                </button>
-              </Link>
-              <Link href="/joinroom">
+              <Link href="/game">
                 <button className="bg-red-500 hover:bg-red-600 text-white text-[18px] h-[50px] lg:h-[57px] w-full lg:w-[320px] rounded-[90px] font-bold font-instrumentSans px-4">
                   MULTI-PLAYER
                 </button>
               </Link>
             </div>
 
-            <p
+            {/* <p
               className={`text-gray-300 text-[24px] lg:text-[32px] mt-4 ${shadowsIntoLightTwo.className}`}
             >
               Wanna learn more about our model?
-            </p>
+            </p> */}
           </main>
         </div>
 
@@ -68,6 +55,4 @@ const Home: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Home;
+}
