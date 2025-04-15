@@ -44,7 +44,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    const ws = new WebSocket("ws://10.1.17.150:8000/ws");
+    const ws = new WebSocket(
+      process.env.NEXT_PUBLIC_WEBSOCKET_URL || "ws://localhost:8080"
+    );
     setSocket(ws);
 
     ws.onopen = () => console.log("✅ WebSocket connection established.");
