@@ -155,6 +155,14 @@ export default function GamePage() {
           ...prevLeaderboard,
           [msg.username!]: (prevLeaderboard[msg.username!] || 0) + msg.points!,
         }));
+
+        if (type === "correct_guess") {
+          if (msg.username === username) {
+            toast.success("You guessed correctly!");
+          } else {
+            toast.success(`${msg.username} guessed correctly!`);
+          }
+        }
       } else if (type === "round_ended") {
         setTimeRemaining(0);
         toast.success(`Round ended! Correct answer was: ${msg.correct_answer}`);

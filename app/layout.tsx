@@ -16,7 +16,12 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
-        <Toaster />
+        <Toaster
+          position="bottom-left"
+          closeButton={true}
+          theme="dark"
+          duration={2000}
+        />
       </body>
     </html>
   );
